@@ -1,0 +1,8 @@
+name: BloodCore
+version: ${project.version}
+softdepend:
+  - PlaceholderAPI
+authors:
+  - Hardstyles
+  - elijuh
+main: dev.bloodcore.Core
