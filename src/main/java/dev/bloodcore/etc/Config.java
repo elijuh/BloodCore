@@ -3,6 +3,7 @@ package dev.bloodcore.etc;
 import dev.bloodcore.Core;
 
 public enum Config {
+    SERVER_NAME("server-name", "Hub"),
     CHAT_COOLDOWN("chat-manager.cooldown-seconds", 3);
 
     private final String path;
