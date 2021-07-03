@@ -2,9 +2,13 @@ package dev.bloodcore;
 
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
+import dev.bloodcore.commands.impl.RankCommand;
 import dev.bloodcore.db.MongoManager;
+import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.User;
+import dev.bloodcore.listeners.BukkitListener;
 import dev.bloodcore.ranks.RankManager;
+import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.ReflectionUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -29,9 +33,20 @@ public class Core extends JavaPlugin {
     }
 
     public void onEnable() {
+        getConfig().options().copyDefaults(true);
+        getConfig().addDefault("mongo-db.connection-string", "");
+        for (Config value : Config.values()) {
+            getConfig().addDefault(value.getPath(), value.getDef());
+        }
+        saveConfig();
+
         mongoManager = new MongoManager();
         chatManager = new ChatManager();
         rankManager = new RankManager();
+
+        new RankCommand();
+
+        Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             users.add(new User(p));
@@ -49,7 +64,6 @@ public class Core extends JavaPlugin {
             user.unload();
         }
         users.clear();
-        mongoManager.getClient().close();
     }
 
     public User getUser(String name) {
@@ -63,5 +77,14 @@ public class Core extends JavaPlugin {
 
     public static Core i() {
         return instance;
+    }
+
+    public void rankLog(String log) {
+        for (User user : users) {
+            if (user.getPlayer().hasPermission("blood.command.rank")) {
+                user.msg("&4&lLog &8» &7" + log);
+            }
+        }
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&4&lLog &8» &7" + log));
     }
 }

@@ -18,12 +18,14 @@ public class BukkitListener implements Listener {
         Core.i().getUsers().add(user);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void on(PlayerJoinEvent e) {
-        if (Core.i().getUser(e.getPlayer().getName()) == null) {
-            User user = new User(e.getPlayer());
+        User user = Core.i().getUser(e.getPlayer().getName());
+        if (user == null) {
+            user = new User(e.getPlayer());
             Core.i().getUsers().add(user);
         }
+        Core.i().getMongoManager().updateUser(user);
     }
 
     @EventHandler

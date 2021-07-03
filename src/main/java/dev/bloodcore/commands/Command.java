@@ -2,6 +2,8 @@ package dev.bloodcore.commands;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import dev.bloodcore.Core;
+import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.ReflectionUtil;
 import lombok.Getter;
@@ -48,17 +50,22 @@ public abstract class Command extends org.bukkit.command.Command {
     public boolean execute(CommandSender sender, String alias, String[] args) {
         if (!(sender instanceof Player)) {
             onConsole(sender, args);
-            return false;
+            return true;
         }
 
         Player p = (Player) sender;
         if (permission != null && !p.hasPermission(permission)) {
             p.sendMessage(ChatUtil.color("&cNo permission."));
-            return false;
+            return true;
+        }
+        User user = Core.i().getUser(p.getName());
+        if (user == null) {
+            p.sendMessage(ChatUtil.color("&cProfile not loaded, please relog and try again."));
+            return true;
         }
 
         try {
-            onExecute(p, args);
+            onExecute(user, args);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -75,8 +82,12 @@ public abstract class Command extends org.bukkit.command.Command {
             }
 
             Player p = (Player) sender;
+            User user = Core.i().getUser(p.getName());
+            if (user == null) {
+                return ImmutableList.of();
+            }
 
-            List<String> tabCompletion = onTabComplete(p, args);
+            List<String> tabCompletion = onTabComplete(user, args);
             if (tabCompletion == null) {
                 List<String> list = Lists.newArrayList();
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -101,8 +112,8 @@ public abstract class Command extends org.bukkit.command.Command {
         return registeredCommands;
     }
 
-    public abstract List<String> onTabComplete(Player p, String[] args);
+    public abstract List<String> onTabComplete(User user, String[] args);
 
-    public abstract void onExecute(Player p, String[] args);
+    public abstract void onExecute(User user, String[] args);
 
 }

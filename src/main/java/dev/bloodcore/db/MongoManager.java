@@ -9,7 +9,6 @@ import com.mongodb.client.model.CollationStrength;
 import com.mongodb.client.model.Filters;
 import dev.bloodcore.Core;
 import dev.bloodcore.etc.User;
-import dev.bloodcore.ranks.Rank;
 import lombok.Getter;
 import org.bson.Document;
 

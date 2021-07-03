@@ -3,11 +3,15 @@ package dev.bloodcore.etc;
 import dev.bloodcore.Core;
 import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.ranks.permission.CustomPermissionBase;
+import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.ReflectionUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.Document;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissibleBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,18 +43,27 @@ public class User {
 
         userPermissions = data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class);
 
-        CustomPermissionBase permissionBase = new CustomPermissionBase(this);
-        Class<?> craftHumanEntityClass = ReflectionUtil.getCBClass("CraftHumanEntity");
-        Object craftHumanEntity = craftHumanEntityClass.cast(player);
-        try {
-            ReflectionUtil.getField(craftHumanEntityClass, "perm").set(craftHumanEntity, permissionBase);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.setPermissibleBase(player, new CustomPermissionBase(this));
     }
 
     public void unload() {
+        PermissibleBase permissible = ReflectionUtil.getPermissibleBase(player);
+        if (permissible instanceof CustomPermissionBase) {
+            CustomPermissionBase permissionBase = (CustomPermissionBase) permissible;
+            ReflectionUtil.setPermissibleBase(player, permissionBase.getPrevious());
+        }
+    }
 
+    public void msg(String s) {
+        player.sendMessage(ChatUtil.color(s));
+    }
+
+    public void sound(Sound sound, float volume, float pitch) {
+        player.playSound(player.getLocation(), sound, volume, pitch);
+    }
+
+    public void actionBar(String s) {
+        ReflectionUtil.sendActionBar(player, ChatUtil.color(s));
     }
 
     public String uuid() {
@@ -65,9 +78,11 @@ public class User {
         return player.getAddress().getAddress().getHostAddress();
     }
 
-    public List<String> getUserPermissions() {
+    public List<String> getPermissions() {
         List<String> permissions = new ArrayList<>(this.userPermissions);
-        permissions.addAll(rank.getPermissions());
+        if (rank != null) {
+            permissions.addAll(rank.getPermissions());
+        }
         return permissions;
     }
 
@@ -80,5 +95,6 @@ public class User {
         userPermissions.clear();
         userPermissions.addAll(data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class));
         rank = Core.i().getRankManager().getRank(data.getString("rank"), true);
+        Bukkit.getLogger().info("set " + name() + "'s rank to " + rank.getDisplay());
     }
 }

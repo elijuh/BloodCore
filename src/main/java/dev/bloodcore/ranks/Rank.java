@@ -11,12 +11,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class Rank {
-    private final String name;
+    private final String id;
+    private String display;
     private String prefix, color;
     private int weight;
     private List<String> permissions;
+    private List<String> parents;
 
     public String getDisplay() {
-        return ChatUtil.color(color + name);
+        return ChatUtil.color(color + display);
     }
 }
