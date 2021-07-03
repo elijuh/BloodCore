@@ -33,7 +33,7 @@ public class User {
         if (data == null) {
             data = new Document("uuid", uuid())
                     .append("name", name())
-                    .append("ip", ip())
+                    .append("ip", "")
                     .append("rank", "default");
 
             Core.i().getMongoManager().getUsersCollection().insertOne(data);

@@ -69,62 +69,62 @@ public class RankManager {
     }
 
     private void updateRank(Document data) {
-        String name = data.getString("display");
+        String display = data.getString("display");
         String prefix = data.getString("prefix");
         String color = data.getString("color");
         int weight = data.getInteger("weight");
         List<String> permissions = data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class);
         List<String> parents = data.getList("parents", String.class) == null ? new ArrayList<>() : data.getList("parents", String.class);
-        Rank rank = getRank(name);
+        Rank rank = getRank(data.getString("_id"));
         if (rank != null) {
             List<String> updates = new ArrayList<>();
-            if (!rank.getDisplay().equals(name)) {
-                rank.setDisplay(name);
-                updates.add("had display set to " + name + ".");
+            if (!rank.getDisplay().equals(display)) {
+                rank.setDisplay(display);
+                updates.add("had display set to &c" + display + "&7.");
             }
             if (!rank.getPrefix().equals(prefix)) {
                 rank.setPrefix(prefix);
-                updates.add("had prefix set to " + prefix + ".");
+                updates.add("had prefix set to &c" + prefix + "&7.");
             }
             if (!rank.getColor().equals(color)) {
                 rank.setColor(color);
-                updates.add("had color set to " + color + ".");
+                updates.add("had color set to &c" + color + "&7.");
             }
             if (rank.getWeight() != weight) {
                 rank.setWeight(weight);
-                updates.add("had weight set to " + weight + ".");
+                updates.add("had weight set to &c" + weight + "&7.");
             }
             for (String perm : permissions) {
                 if (!rank.getPermissions().contains(perm)) {
                     rank.getPermissions().add(perm);
-                    updates.add("added permission " + perm + ".");
+                    updates.add("added permission &c" + perm + "&7.");
                 }
             }
             for (String perm : new ArrayList<>(rank.getPermissions())) {
                 if (!permissions.contains(perm)) {
                     rank.getPermissions().remove(perm);
-                    updates.add("removed permission " + perm + ".");
+                    updates.add("removed permission &c" + perm + "&7.");
                 }
             }
             for (String parent : parents) {
                 if (!rank.getParents().contains(parent)) {
                     rank.getParents().add(parent);
-                    updates.add("added parent " + parent + ".");
+                    updates.add("added parent &c" + parent + "&7.");
                 }
             }
             for (String parent : new ArrayList<>(rank.getParents())) {
                 if (!parents.contains(parent)) {
                     rank.getParents().remove(parent);
-                    updates.add("removed parent " + parent + ".");
+                    updates.add("removed parent &c" + parent + "&7.");
                 }
             }
             for (String update : updates) {
                 Core.i().rankLog("rank &c" + rank.getId() + "&7 " + update);
             }
         } else {
-            rank = new Rank(data.getString("_id"), name, prefix, color, weight, permissions, parents);
+            rank = new Rank(data.getString("_id"), display, prefix, color, weight, permissions, parents);
             ranks.put(rank.getId(), rank);
-            Core.i().rankLog("created new rank " + rank.getId());
+            Core.i().rankLog("created new rank &c" + rank.getId());
         }
     }
 

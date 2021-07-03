@@ -6,11 +6,16 @@ import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.ranks.Rank;
+import dev.bloodcore.utils.ChatUtil;
 import org.bson.Document;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.util.StringUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RankCommand extends Command {
@@ -23,7 +28,7 @@ public class RankCommand extends Command {
         List<String> completion = new ArrayList<>();
         switch (args.length) {
             case 1: {
-                for (String sub : new String[]{"list", "info", "set", "create", "delete", "setprefix", "setweight", "permission", "parent"}) {
+                for (String sub : new String[]{"list", "info", "set", "create", "delete", "setprefix", "setweight", "setcolor", "permission", "parent"}) {
                     if (StringUtil.startsWithIgnoreCase(sub, args[0])) {
                         completion.add(sub);
                     }
@@ -97,18 +102,23 @@ public class RankCommand extends Command {
                 }
                 case "create": {
                     if (args.length > 2) {
-                        String name;
+                        String name, display;
                         int weight;
                         if (Core.i().getRankManager().getRank(args[1]) == null) {
-                            name = args[1];
+                            display = args[1];
+                            name = ChatColor.stripColor(ChatUtil.color(display.toLowerCase()));
+                            if (!isSafeName(name)) {
+                                user.msg("&cInvalid name for rank: &7" + name);
+                                break;
+                            }
                             try {
                                 weight = Integer.parseInt(args[2]);
                             } catch (NumberFormatException e) {
                                 user.msg("&cInvalid integer for weight at arg #2: &7" + args[2]);
                                 break;
                             }
-                            Rank rank = new Rank(name.toLowerCase(), name, "", "", weight, ImmutableList.of(), ImmutableList.of());
-                            Document data = new Document("_id", rank.getDisplay().toLowerCase())
+                            Rank rank = new Rank(name, display, "", "", weight, ImmutableList.of(), ImmutableList.of());
+                            Document data = new Document("_id", rank.getId())
                                     .append("display", rank.getDisplay())
                                     .append("prefix", "")
                                     .append("color", "")
@@ -156,6 +166,21 @@ public class RankCommand extends Command {
                         }
                     } else {
                         user.msg("&cUsage: &7/rank setprefix <rank> <prefix..>");
+                    }
+                    break;
+                }
+                case "setcolor": {
+                    if (args.length == 3) {
+                        Document data = Core.i().getMongoManager().getRanksCollections().find(new Document("_id", args[1].toLowerCase())).first();
+                        if (data != null) {
+                            String color = args[2];
+                            Document update = new Document("color", color);
+                            Core.i().getMongoManager().getRanksCollections().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", update));
+                        } else {
+                            user.msg("&7That rank doesn't exist.");
+                        }
+                    } else {
+                        user.msg("&cUsage: &7/rank setcolor <rank> <color>");
                     }
                     break;
                 }
@@ -275,9 +300,20 @@ public class RankCommand extends Command {
         user.msg("&c- &7/rank delete <rank>");
         user.msg("&c- &7/rank setprefix <rank> <prefix..>");
         user.msg("&c- &7/rank setweight <rank> <weight>");
+        user.msg("&c- &7/rank setcolor <rank> <color>");
         user.msg("&c- &7/rank permission <rank> <add|remove> <permission>");
         user.msg("&c- &7/rank parent <rank> <add|remove> <parent rank>");
         user.msg("&8&m-------------------------------");
+    }
+
+    private boolean isSafeName(String name) {
+        for (char c : name.toCharArray()) {
+            System.out.println(Character.getType(c));
+            if (Character.getType(c) != Character.LOWERCASE_LETTER) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private enum Action {
