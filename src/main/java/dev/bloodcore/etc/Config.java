@@ -40,7 +40,7 @@ public enum Config {
     public String getString(Map<ConfigPlaceholder, String> placeholders) {
         String string = Core.i().getConfig().contains(path) ? Core.i().getConfig().getString(path) : (String) def;
         for (Map.Entry<ConfigPlaceholder, String> entry : placeholders.entrySet()) {
-            entry.getKey().setPlaceholders(string, entry.getValue());
+            string = entry.getKey().setPlaceholders(string, entry.getValue());
         }
         return string;
     }

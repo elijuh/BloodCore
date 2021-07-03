@@ -1,130 +1,134 @@
 package dev.bloodcore.ranks;
 
 import com.google.common.collect.ImmutableList;
-import com.mongodb.Block;
+import com.mongodb.client.model.Collation;
+import com.mongodb.client.model.CollationStrength;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import com.mongodb.client.model.changestream.OperationType;
 import dev.bloodcore.Core;
 import dev.bloodcore.etc.User;
 import lombok.Getter;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.function.Consumer;
 
 @Getter
 public class RankManager {
-    private final Map<String, Rank> ranks = new HashMap<>();
+    private final List<Rank> ranks = new ArrayList<>();
 
     public RankManager() {
-        Rank defaultRank = new Rank("default", "Default", "&7", "&7", 0, ImmutableList.of(), ImmutableList.of());
-        ranks.put(defaultRank.getId(), defaultRank);
+        Rank defaultRank = new Rank("Default", "&7", "&7", 0, new HashSet<>(), new HashSet<>());
+        ranks.add(defaultRank);
 
         for (Document data : Core.i().getMongoManager().getRanksCollections().find()) {
             updateRank(data);
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(Core.i(), () -> Core.i().getMongoManager().getRanksCollections().watch().forEach((Block<? super ChangeStreamDocument<Document>>) bson -> {
-            try {
-                if (bson.getDocumentKey() != null) {
-                    if (bson.getOperationType() == OperationType.INSERT || bson.getOperationType() == OperationType.UPDATE || bson.getOperationType() == OperationType.REPLACE) {
-                        Document data = Core.i().getMongoManager().getRanksCollections().find(bson.getDocumentKey()).first();
-                        if (data != null) {
-                            updateRank(data);
-                        }
-                    } else if (bson.getOperationType() == OperationType.DELETE) {
-                        Rank rank = ranks.remove(bson.getDocumentKey().getString("_id").getValue());
-                        if (rank != null) {
-                            for (User user : Core.i().getUsers()) {
-                                user.setRank(getRank("default"));
-                            }
-                            Core.i().rankLog("rank &c" + rank.getDisplay() + " &7was removed.");
-                        }
-                    }
-                }
-            } catch (LinkageError error) {
-                //yes
-            }
-        }));
-        Bukkit.getScheduler().runTaskAsynchronously(Core.i(), () -> Core.i().getMongoManager().getUsersCollection().watch().forEach((Block<? super ChangeStreamDocument<Document>>) bson -> {
-            try {
-                if (bson.getOperationType() == OperationType.UPDATE && bson.getDocumentKey() != null) {
-                    Document data = Core.i().getMongoManager().getUsersCollection().find(bson.getDocumentKey()).first();
+        new Thread(() -> Core.i().getMongoManager().getRanksCollections().watch().forEach((Consumer<? super ChangeStreamDocument<Document>>) bson -> {
+            if (bson.getDocumentKey() != null) {
+                if (bson.getOperationType() == OperationType.INSERT || bson.getOperationType() == OperationType.UPDATE || bson.getOperationType() == OperationType.REPLACE) {
+                    Document data = Core.i().getMongoManager().getRanksCollections().find(bson.getDocumentKey()).first();
                     if (data != null) {
-                        User user = Core.i().getUser(data.getString("name"));
-                        if (user != null) {
-                            user.refreshPermissions(data);
+                        updateRank(data);
+                    }
+                } else if (bson.getOperationType() == OperationType.DELETE) {
+                    Rank rank = getRank(bson.getDocumentKey().getString("_id").getValue());
+                    if (rank != null && !rank.getId().equals("default")) {
+                        for (User user : Core.i().getUsers()) {
+                            if (user.getRank() == rank) {
+                                user.setRank(getRank("default"));
+                                Core.i().getMongoManager().getUsersCollection().updateOne(Filters.eq("uuid", user.uuid()), new Document("$set", new Document("rank", "Default")));
+                            }
                         }
+                        ranks.remove(rank);
+                        Core.i().rankLog("rank &6" + rank.getId() + " &ewas removed.");
                     }
                 }
-            } catch (LinkageError error) {
-                //yes
             }
-        }));
+        })).start();
 
-        if (Core.i().getMongoManager().getRanksCollections().find(new Document("_id", "default")).first() == null) {
-            Core.i().getMongoManager().getRanksCollections().insertOne(new Document("_id", "default").append("display", "Default").append("prefix", "&7").append("color", "&7")
-                    .append("weight", 0).append("permissions", ImmutableList.of()).append("parents", ImmutableList.of()));
+        new Thread(() -> Core.i().getMongoManager().getUsersCollection().watch().forEach((Consumer<? super ChangeStreamDocument<Document>>) bson -> {
+            if (bson.getOperationType() == OperationType.UPDATE && bson.getDocumentKey() != null) {
+                Document data = Core.i().getMongoManager().getUsersCollection().find(bson.getDocumentKey()).first();
+                if (data != null) {
+                    User user = Core.i().getUser(data.getString("name"));
+                    if (user != null) {
+                        user.refreshPermissions(data);
+                    }
+                }
+            }
+        })).start();
+
+        if (Core.i().getMongoManager().getRanksCollections().find(new Document("_id", "Default")).first() == null) {
+            Core.i().getMongoManager().getRanksCollections().insertOne(new Document("_id", "Default").append("prefix", "&7").append("color", "&7")
+                    .append("priority", 0).append("permissions", ImmutableList.of()).append("parents", ImmutableList.of()));
         }
     }
 
+    public Document getRankData(String name) {
+        return Core.i().getMongoManager().getRanksCollections().find(new Document("_id", name)).collation(Collation.builder().locale("en").collationStrength(CollationStrength.PRIMARY).build()).first();
+    }
+
     private void updateRank(Document data) {
-        String display = data.getString("display");
         String prefix = data.getString("prefix");
         String color = data.getString("color");
-        int weight = data.getInteger("weight");
+        int priority = data.getInteger("priority");
         List<String> permissions = data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class);
         List<String> parents = data.getList("parents", String.class) == null ? new ArrayList<>() : data.getList("parents", String.class);
         Rank rank = getRank(data.getString("_id"));
         if (rank != null) {
             List<String> updates = new ArrayList<>();
-            if (!rank.getDisplay().equals(display)) {
-                rank.setDisplay(display);
-                updates.add("had display set to &c" + display + "&7.");
-            }
             if (!rank.getPrefix().equals(prefix)) {
                 rank.setPrefix(prefix);
-                updates.add("had prefix set to &c" + prefix + "&7.");
+                updates.add("had prefix set to &6" + prefix + "Player&e.");
             }
             if (!rank.getColor().equals(color)) {
                 rank.setColor(color);
-                updates.add("had color set to &c" + color + "&7.");
+                updates.add("had color set to &6" + color + "Player&e.");
             }
-            if (rank.getWeight() != weight) {
-                rank.setWeight(weight);
-                updates.add("had weight set to &c" + weight + "&7.");
+            if (rank.getPriority() != priority) {
+                rank.setPriority(priority);
+                updates.add("had priority set to &6" + priority + "&e.");
             }
             for (String perm : permissions) {
                 if (!rank.getPermissions().contains(perm)) {
                     rank.getPermissions().add(perm);
-                    updates.add("added permission &c" + perm + "&7.");
+                    updates.add("added permission &6" + perm + "&e.");
                 }
             }
-            for (String perm : new ArrayList<>(rank.getPermissions())) {
+            for (String perm : new HashSet<>(rank.getPermissions())) {
                 if (!permissions.contains(perm)) {
                     rank.getPermissions().remove(perm);
-                    updates.add("removed permission &c" + perm + "&7.");
+                    updates.add("removed permission &6" + perm + "&e.");
                 }
             }
             for (String parent : parents) {
                 if (!rank.getParents().contains(parent)) {
                     rank.getParents().add(parent);
-                    updates.add("added parent &c" + parent + "&7.");
+                    updates.add("added parent &6" + parent + "&e.");
                 }
             }
-            for (String parent : new ArrayList<>(rank.getParents())) {
+            for (String parent : new HashSet<>(rank.getParents())) {
                 if (!parents.contains(parent)) {
                     rank.getParents().remove(parent);
-                    updates.add("removed parent &c" + parent + "&7.");
+                    updates.add("removed parent &6" + parent + "&e.");
                 }
             }
             for (String update : updates) {
-                Core.i().rankLog("rank &c" + rank.getId() + "&7 " + update);
+                Core.i().rankLog("rank &6" + rank.getId() + " &e" + update);
             }
         } else {
-            rank = new Rank(data.getString("_id"), display, prefix, color, weight, permissions, parents);
-            ranks.put(rank.getId(), rank);
-            Core.i().rankLog("created new rank &c" + rank.getId());
+            rank = new Rank(data.getString("_id"), prefix, color, priority, new HashSet<>(permissions), new HashSet<>(parents));
+            Rank current = getRank(rank.getId());
+            if (current != null) {
+                ranks.remove(current);
+            }
+            ranks.add(rank);
+            Core.i().rankLog("created new rank &6" + rank.getId());
         }
     }
 
@@ -133,9 +137,11 @@ public class RankManager {
     }
 
     public Rank getRank(String name, boolean orDefault) {
-        Rank rank = ranks.get(name.toLowerCase());
-        if (rank == null && orDefault) {
-            rank = ranks.get("default");
+        Rank rank = ranks.stream().filter(r -> r.getId().equalsIgnoreCase(name)).findFirst().orElse(null);
+        if (name.equals("default")) {
+            return rank;
+        } else if (rank == null && orDefault) {
+            rank = getRank("default");
         }
         return rank;
     }

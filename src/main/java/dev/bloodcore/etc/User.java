@@ -1,5 +1,6 @@
 package dev.bloodcore.etc;
 
+import com.mongodb.client.model.Filters;
 import dev.bloodcore.Core;
 import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.ranks.permission.CustomPermissionBase;
@@ -8,7 +9,6 @@ import dev.bloodcore.utils.ReflectionUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
@@ -34,12 +34,17 @@ public class User {
             data = new Document("uuid", uuid())
                     .append("name", name())
                     .append("ip", "")
+                    .append("display", "&7" + name())
                     .append("rank", "default");
 
             Core.i().getMongoManager().getUsersCollection().insertOne(data);
         }
 
         rank = Core.i().getRankManager().getRank(data.getString("rank") == null ? "default" : data.getString("rank"));
+        if (rank == null) {
+            rank = Core.i().getRankManager().getRank("default");
+            Core.i().getMongoManager().getUsersCollection().updateOne(Filters.eq("uuid", uuid()), new Document("$set", new Document("rank", rank.getId())));
+        }
 
         userPermissions = data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class);
 
@@ -82,8 +87,22 @@ public class User {
         List<String> permissions = new ArrayList<>(this.userPermissions);
         if (rank != null) {
             permissions.addAll(rank.getPermissions());
+            for (String parent : rank.getParents()) {
+                Rank parentRank = Core.i().getRankManager().getRank(parent);
+                if (parentRank != null) {
+                    permissions.addAll(parentRank.getPermissions());
+                }
+            }
         }
+        permissions.addAll(Core.i().getRankManager().getRank("default").getPermissions());
         return permissions;
+    }
+
+    public void setRank(Rank rank) {
+        if (this.rank != rank) {
+            this.rank = rank;
+            Core.i().rankLog("&6" + name() + " &ehad rank set to &6" + rank.getId() + "&e.");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -94,7 +113,6 @@ public class User {
     public void refreshPermissions(Document data) {
         userPermissions.clear();
         userPermissions.addAll(data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class));
-        rank = Core.i().getRankManager().getRank(data.getString("rank"), true);
-        Bukkit.getLogger().info("set " + name() + "'s rank to " + rank.getDisplay());
+        setRank(Core.i().getRankManager().getRank(data.getString("rank"), true));
     }
 }

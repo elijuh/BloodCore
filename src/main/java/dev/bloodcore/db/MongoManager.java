@@ -32,7 +32,7 @@ public class MongoManager {
     }
 
     public void updateUser(User user) {
-        Document update = new Document("name", user.name()).append("ip", user.ip());
+        Document update = new Document("name", user.name()).append("ip", user.ip()).append("display", user.getRank().getColor() + user.name());
 
         usersCollection.updateOne(Filters.eq("uuid", user.uuid()), new Document("$set", update));
     }

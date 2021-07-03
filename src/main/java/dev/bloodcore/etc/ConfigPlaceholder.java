@@ -13,7 +13,7 @@ public enum ConfigPlaceholder {
 
     private final String placeholder;
 
-    public void setPlaceholders(String input, String replace) {
-        input.replace(placeholder, replace);
+    public String setPlaceholders(String input, String replace) {
+        return input.replace(placeholder, replace);
     }
 }

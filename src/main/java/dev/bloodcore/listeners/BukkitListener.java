@@ -5,6 +5,7 @@ import dev.bloodcore.Core;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.ConfigPlaceholder;
 import dev.bloodcore.etc.User;
+import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -52,11 +53,11 @@ public class BukkitListener implements Listener {
         if (user == null) {
             e.setCancelled(true);
         } else {
-            e.setFormat(Config.GLOBAL_CHAT_FORMAT.getString(ImmutableMap.of(
+            e.setFormat(ChatUtil.color(Config.GLOBAL_CHAT_FORMAT.getString(ImmutableMap.of(
                     ConfigPlaceholder.PREFIX, user.getRank().getPrefix(),
                     ConfigPlaceholder.PLAYER, "%1$s",
                     ConfigPlaceholder.GLOBAL_CHAT_MESSAGE, "%2$s")
-            ));
+            )));
         }
     }
 }

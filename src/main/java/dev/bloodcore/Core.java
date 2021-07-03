@@ -2,7 +2,7 @@ package dev.bloodcore;
 
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.commands.impl.RankCommand;
+import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.db.MongoManager;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.User;
@@ -64,6 +64,7 @@ public class Core extends JavaPlugin {
             user.unload();
         }
         users.clear();
+        Bukkit.shutdown();
     }
 
     public User getUser(String name) {
@@ -82,9 +83,9 @@ public class Core extends JavaPlugin {
     public void rankLog(String log) {
         for (User user : users) {
             if (user.getPlayer().hasPermission("blood.command.rank")) {
-                user.msg("&4&lLog &8» &7" + log);
+                user.msg("&6&lRank Log &8» &e" + log);
             }
         }
-        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&4&lLog &8» &7" + log));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&6&lRank Log &8» &e" + log));
     }
 }
