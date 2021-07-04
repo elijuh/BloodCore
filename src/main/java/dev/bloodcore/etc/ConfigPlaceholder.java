@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 public enum ConfigPlaceholder {
     GLOBAL_CHAT_MESSAGE("%message%"),
     PREFIX("%rank_prefix%"),
+    CORE_PREFIX("%core_prefix%"),
     RANK_COLOR("%rank_color%"),
     PLAYER("%player%"),
     SERVER("%server%"),

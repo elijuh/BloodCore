@@ -2,6 +2,7 @@ package dev.bloodcore;
 
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
+import dev.bloodcore.commands.impl.FlyCommand;
 import dev.bloodcore.commands.impl.other.ListCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.db.MongoManager;
@@ -56,7 +57,7 @@ public class Core extends JavaPlugin {
 
         new RankCommand();
         new ListCommand();
-
+        new FlyCommand();
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
 
         for (Player p : Bukkit.getOnlinePlayers()) {

@@ -11,8 +11,11 @@ public enum Config {
     SERVER_NAME("server-name", "Hub"),
     CHAT_COOLDOWN("chat-manager.cooldown-seconds", 3),
     CHAT_COOLDOWN_MSG("chat-manager.cooldown-message", "&cPlease wait &7%chat-cooldown%s &cbefore sending another msg."),
-    GLOBAL_CHAT_FORMAT("chat-format", "%rank_prefix%%player% &8» &r%message%");
+    GLOBAL_CHAT_FORMAT("chat-format", "%rank_prefix%%player% &8» &r%message%"),
+    FLY_TOGGLE_SELF("commands.fly.toggle-self", "&eYou've %state% flight"),
+    FLY_TOGGLE_OTHER("commands.fly.toggle-other", "&eYou've %state% fly for %target_prefix%%target%"),
 
+    FLY_TOGGLE_OTHER_RECEIVER("commands.fly.toggle-other-receiver", "&eYour fly was %state% by %sender_prefix%%sender%");
     private final String path;
     private final Object def;
 
