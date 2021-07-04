@@ -35,14 +35,14 @@ public class User {
                     .append("name", name())
                     .append("ip", "")
                     .append("display", "&7" + name())
-                    .append("rank", "default");
+                    .append("rank", "Default");
 
             Core.i().getMongoManager().getUsersCollection().insertOne(data);
         }
 
-        rank = Core.i().getRankManager().getRank(data.getString("rank") == null ? "default" : data.getString("rank"));
+        rank = Core.i().getRankManager().getRank(data.getString("rank") == null ? "Default" : data.getString("rank"));
         if (rank == null) {
-            rank = Core.i().getRankManager().getRank("default");
+            rank = Core.i().getRankManager().getRank("Default");
             Core.i().getMongoManager().getUsersCollection().updateOne(Filters.eq("uuid", uuid()), new Document("$set", new Document("rank", rank.getId())));
         }
 

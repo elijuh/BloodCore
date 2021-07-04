@@ -2,9 +2,9 @@ package dev.bloodcore;
 
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.commands.impl.main.BloodCommand;
 import dev.bloodcore.commands.impl.essential.FlyCommand;
 import dev.bloodcore.commands.impl.essential.ListCommand;
+import dev.bloodcore.commands.impl.main.BloodCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.db.MongoManager;
 import dev.bloodcore.etc.Config;

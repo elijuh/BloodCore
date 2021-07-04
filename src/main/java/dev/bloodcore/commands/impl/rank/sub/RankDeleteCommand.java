@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.mongodb.client.model.Filters;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
@@ -34,7 +33,7 @@ public class RankDeleteCommand extends SubCommand {
             Rank rank = Core.i().getRankManager().getRank(args[1]);
             if (rank == null) {
                 sender.sendMessage(ChatUtil.color("&7That rank doesn't exist."));
-            } else if (rank.getId().equals("default")) {
+            } else if (rank.getId().equalsIgnoreCase("default")) {
                 sender.sendMessage(ChatUtil.color("&7You cannot delete the default rank."));
             } else {
                 Core.i().getMongoManager().getRanksCollections().deleteOne(Filters.eq("_id", rank.getId()));
