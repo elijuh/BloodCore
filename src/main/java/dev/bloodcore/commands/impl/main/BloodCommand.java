@@ -1,8 +1,9 @@
-package dev.bloodcore.commands.impl.world;
+package dev.bloodcore.commands.impl.main;
 
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.commands.SubCommand;
+import dev.bloodcore.commands.impl.main.sub.BloodReloadCommand;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
@@ -11,13 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WorldCommand extends Command {
+public class BloodCommand extends Command {
     private final List<SubCommand> subcommands = new ArrayList<>();
-
-    public WorldCommand() {
-        super("world", ImmutableList.of(), "blood.world.use");
-
-
+    public BloodCommand() {
+        super("blood", ImmutableList.of("core"), "blood.admin");
+        subcommands.add(new BloodReloadCommand());
     }
 
     @Override
@@ -55,13 +54,11 @@ public class WorldCommand extends Command {
             if (sub != null) {
                 sub.execute(sender, args);
             } else {
-                sender.sendMessage(ChatUtil.color("&7Unknown sub-command, use &c/rank help &7for help."));
+                sender.sendMessage(ChatUtil.color("&7Unknown sub-command, use &c/blood help &7for help."));
             }
         } else {
             help(sender);
         }
-
-
     }
 
     private void help(CommandSender sender) {
@@ -70,7 +67,7 @@ public class WorldCommand extends Command {
         if (subs.isEmpty()) {
             sender.sendMessage(ChatUtil.color("&eYou don't have permission to use any subcommands."));
         } else {
-            StringBuilder help = new StringBuilder("&6&lWorld Commands &7»");
+            StringBuilder help = new StringBuilder("&6&lRank Commands &7»");
             for (SubCommand sub : getAvailableSubs(sender)) {
                 help.append("\n&6» &e").append(sub.getUsage());
             }

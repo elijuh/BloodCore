@@ -22,7 +22,6 @@ public class RankEditCommand extends SubCommand {
         subcommands.add(new RankEditParentCommand());
         subcommands.add(new RankEditSetPriorityCommand());
         subcommands.add(new RankEditSetPrefixCommand());
-        subcommands.add(new RankEditSetColorCommand());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package dev.bloodcore.commands.impl;
+package dev.bloodcore.commands.impl.essential;
 
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class FlyCommand extends Command {
     public FlyCommand() {
-        super("fly", ImmutableList.of("flight"), "bloodcore.fly");
+        super("fly", ImmutableList.of("flight"), "blood.fly");
     }
 
     @Override

@@ -3,7 +3,6 @@ package dev.bloodcore.commands.impl.rank.sub;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
@@ -29,7 +28,7 @@ public class RankListCommand extends SubCommand {
         List<Rank> ranks = Core.i().getRankManager().getRanks().stream().sorted(Comparator.comparingInt(Rank::getPriority)).collect(Collectors.toList());
         for (int i = ranks.size() - 1; i > -1; i--) {
             Rank rank = ranks.get(i);
-            builder.append("\n&e").append(rank.getId()).append(" &8[&6&l").append(rank.getPriority()).append("&8]");
+            builder.append("\n&e").append(rank.getId()).append(" &7(&r").append(rank.getColor()).append(rank.getId()).append("&7)").append(" &8[&6&l").append(rank.getPriority()).append("&8]");
         }
         sender.sendMessage(ChatUtil.color("&8&m-------------------------------"));
         sender.sendMessage(ChatUtil.color(builder.toString()));

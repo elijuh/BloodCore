@@ -2,12 +2,14 @@ package dev.bloodcore;
 
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.commands.impl.FlyCommand;
-import dev.bloodcore.commands.impl.other.ListCommand;
+import dev.bloodcore.commands.impl.main.BloodCommand;
+import dev.bloodcore.commands.impl.essential.FlyCommand;
+import dev.bloodcore.commands.impl.essential.ListCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.db.MongoManager;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.User;
+import dev.bloodcore.etc.YamlStorage;
 import dev.bloodcore.listeners.BukkitListener;
 import dev.bloodcore.ranks.RankManager;
 import dev.bloodcore.utils.ChatUtil;
@@ -19,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -28,6 +31,8 @@ import java.util.logging.Logger;
 public class Core extends JavaPlugin {
     private final Set<User> users = new HashSet<>();
     private static Core instance;
+
+    private final YamlStorage messages = new YamlStorage(new File(getDataFolder(), "messages.yml"));
 
     private MongoManager mongoManager;
     private ChatManager chatManager;
@@ -44,20 +49,26 @@ public class Core extends JavaPlugin {
             return;
         }
         Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
+
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("mongo-db.connection-string", "");
-        for (Config value : Config.values()) {
-            getConfig().addDefault(value.getPath(), value.getDef());
-        }
         saveConfig();
+
+        messages.copyDefaults();
+        for (Config value : Config.values()) {
+            messages.addDefault(value.getPath(), value.getDef());
+        }
+        messages.save();
 
         mongoManager = new MongoManager();
         chatManager = new ChatManager();
         rankManager = new RankManager();
 
+        new BloodCommand();
         new RankCommand();
         new ListCommand();
         new FlyCommand();
+
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -101,5 +112,10 @@ public class Core extends JavaPlugin {
             }
         }
         Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&6&lRank Log &8» &e" + log));
+    }
+
+    public void reload() {
+        messages.reload();
+        reloadConfig();
     }
 }

@@ -22,7 +22,7 @@ public class RankManager {
     private final Set<Rank> ranks = new HashSet<>();
 
     public RankManager() {
-        Rank defaultRank = new Rank("Default", "&7", "&7", 0, new HashSet<>(), new HashSet<>());
+        Rank defaultRank = new Rank("Default", "&7", 0, new HashSet<>(), new HashSet<>());
         ranks.add(defaultRank);
 
         for (Document data : Core.i().getMongoManager().getRanksCollections().find()) {
@@ -58,9 +58,11 @@ public class RankManager {
                 if (data != null) {
                     User user = Core.i().getUser(data.getString("name"));
                     if (user != null) {
+                        if (!data.getString("rank").equals(user.getRank().getId())) {
+                            Core.i().rankLog("&6" + data.getString("name") + " &ehad rank set to &6" + data.getString("rank") + "&e.");
+                        }
                         user.refreshPermissions(data);
                     }
-                    Core.i().rankLog("&6" + data.getString("name") + " &ehad rank set to &6" + data.getString("rank") + "&e.");
                 }
             }
         })).start();
@@ -87,10 +89,6 @@ public class RankManager {
             if (!rank.getPrefix().equals(prefix)) {
                 rank.setPrefix(prefix);
                 updates.add("had prefix set to &6" + prefix + "Player&e.");
-            }
-            if (!rank.getColor().equals(color)) {
-                rank.setColor(color);
-                updates.add("had color set to &6" + color + "Player&e.");
             }
             if (rank.getPriority() != priority) {
                 rank.setPriority(priority);
@@ -124,7 +122,7 @@ public class RankManager {
                 Core.i().rankLog("rank &6" + rank.getId() + " &e" + update);
             }
         } else {
-            rank = new Rank(data.getString("_id"), prefix, color, priority, new HashSet<>(permissions), new HashSet<>(parents));
+            rank = new Rank(data.getString("_id"), prefix, priority, new HashSet<>(permissions), new HashSet<>(parents));
             Rank current = getRank(rank.getId());
             if (current != null) {
                 ranks.remove(current);

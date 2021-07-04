@@ -3,7 +3,6 @@ package dev.bloodcore.commands.impl.rank.sub;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.utils.ChatUtil;
 import org.bson.Document;
@@ -42,10 +41,9 @@ public class RankCreateCommand extends SubCommand {
                 sender.sendMessage(ChatUtil.color("&cInvalid integer for priority at arg #2: &7" + args[2]));
                 return;
             }
-            Rank rank = new Rank(name, "", "", priority, new HashSet<>(), new HashSet<>());
+            Rank rank = new Rank(name, "", priority, new HashSet<>(), new HashSet<>());
             Document data = new Document("_id", rank.getId())
                     .append("prefix", "")
-                    .append("color", "")
                     .append("priority", priority)
                     .append("permissions", new HashSet<>())
                     .append("parents", new HashSet<>());

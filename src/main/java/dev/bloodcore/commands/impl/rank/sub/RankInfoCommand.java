@@ -29,7 +29,6 @@ public class RankInfoCommand extends SubCommand {
                         .append("\n&eID: &f").append(rank.getId())
                         .append("\n&ePriority: &f").append(rank.getPriority())
                         .append("\n&ePrefix: &7(&r").append(rank.getPrefix()).append("Player&7)")
-                        .append("\n&eColor: &7(&r").append(rank.getColor()).append("Player&7)")
                         .append("\n&6Permissions:\n&8» &a");
                 for (String permission : rank.getPermissions()) {
                     builder.append(permission).append(", ");

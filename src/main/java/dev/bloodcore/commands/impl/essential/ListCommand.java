@@ -1,4 +1,4 @@
-package dev.bloodcore.commands.impl.other;
+package dev.bloodcore.commands.impl.essential;
 
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;

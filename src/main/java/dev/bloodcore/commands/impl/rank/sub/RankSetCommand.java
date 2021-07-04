@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.mongodb.client.model.Filters;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.utils.ChatUtil;
