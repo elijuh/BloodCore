@@ -2,6 +2,7 @@ package dev.bloodcore;
 
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
+import dev.bloodcore.commands.impl.other.ListCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.db.MongoManager;
 import dev.bloodcore.etc.Config;
@@ -14,10 +15,13 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Getter
 public class Core extends JavaPlugin {
@@ -33,6 +37,12 @@ public class Core extends JavaPlugin {
     }
 
     public void onEnable() {
+        if (Bukkit.getServicesManager().getRegistration(Bukkit.getPluginManager().getPlugin("BloodLib").getClass()) != null) {
+            Bukkit.getLogger().log(Level.SEVERE, "Plugin cannot be reloaded! shutting down..");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+        Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("mongo-db.connection-string", "");
         for (Config value : Config.values()) {
@@ -45,6 +55,7 @@ public class Core extends JavaPlugin {
         rankManager = new RankManager();
 
         new RankCommand();
+        new ListCommand();
 
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
 
@@ -54,17 +65,19 @@ public class Core extends JavaPlugin {
     }
 
     public void onDisable() {
-        try {
-            CommandMap map = (CommandMap) ReflectionUtil.getField(Bukkit.getServer().getClass(), "commandMap").get(Bukkit.getServer());
-            ReflectionUtil.unregisterCommands(map, Command.getRegisteredCommands());
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (Bukkit.getServicesManager().getRegistration(Bukkit.getPluginManager().getPlugin("BloodLib").getClass()) == null) {
+            Bukkit.getServicesManager().register(Bukkit.getPluginManager().getPlugin("BloodLib").getClass(), null, Bukkit.getPluginManager().getPlugin("BloodLib"), ServicePriority.Normal);
+            try {
+                CommandMap map = (CommandMap) ReflectionUtil.getField(Bukkit.getServer().getClass(), "commandMap").get(Bukkit.getServer());
+                ReflectionUtil.unregisterCommands(map, Command.getRegisteredCommands());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (User user : users) {
+                user.unload();
+            }
+            users.clear();
         }
-        for (User user : users) {
-            user.unload();
-        }
-        users.clear();
-        Bukkit.shutdown();
     }
 
     public User getUser(String name) {

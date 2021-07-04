@@ -13,8 +13,6 @@ import lombok.Getter;
 import org.bson.Document;
 
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Getter
 public class MongoManager {
@@ -23,8 +21,6 @@ public class MongoManager {
     private final MongoCollection<Document> ranksCollections;
 
     public MongoManager() {
-        Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
-
         client = MongoClients.create(Core.i().getConfig().getString("mongo-db.connection-string"));
         MongoDatabase database = client.getDatabase("blood_core");
         usersCollection = database.getCollection("users");

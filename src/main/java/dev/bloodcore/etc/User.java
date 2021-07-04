@@ -98,13 +98,6 @@ public class User {
         return permissions;
     }
 
-    public void setRank(Rank rank) {
-        if (this.rank != rank) {
-            this.rank = rank;
-            Core.i().rankLog("&6" + name() + " &ehad rank set to &6" + rank.getId() + "&e.");
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         return (T) data.get(key);

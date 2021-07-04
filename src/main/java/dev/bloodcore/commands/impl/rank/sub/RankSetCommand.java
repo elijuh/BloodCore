@@ -17,12 +17,12 @@ import java.util.List;
 
 public class RankSetCommand extends SubCommand {
 
-    public RankSetCommand(RankCommand parent) {
-        super(parent, "set", ImmutableList.of("give"), "blood.rank.set", "/rank set <user> <rank>");
+    public RankSetCommand() {
+        super("set", ImmutableList.of("give"), "blood.rank.set", "/rank set <user> <rank>");
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
             List<String> completion = new ArrayList<>();
             for (User user : Core.i().getUsers()) {
@@ -44,7 +44,7 @@ public class RankSetCommand extends SubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void onExecute(CommandSender sender, String[] args) {
         if (args.length == 3) {
             Document data = Core.i().getMongoManager().getData(args[1]);
             if (data == null) {
@@ -54,6 +54,10 @@ public class RankSetCommand extends SubCommand {
             Rank rank = Core.i().getRankManager().getRank(args[2]);
             if (rank == null) {
                 sender.sendMessage(ChatUtil.color("&cThat rank doesn't exist."));
+                return;
+            }
+            if (data.getString("rank").equals(rank.getId())) {
+                sender.sendMessage(ChatUtil.color("&cUser already has that rank."));
                 return;
             }
             Core.i().getMongoManager().getUsersCollection().updateOne(Filters.eq("uuid", data.getString("uuid")), new Document("$set", new Document("rank", rank.getId())));

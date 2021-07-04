@@ -14,11 +14,12 @@ import org.bson.Document;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 @Getter
 public class RankManager {
-    private final List<Rank> ranks = new ArrayList<>();
+    private final Set<Rank> ranks = new HashSet<>();
 
     public RankManager() {
         Rank defaultRank = new Rank("Default", "&7", "&7", 0, new HashSet<>(), new HashSet<>());
@@ -59,6 +60,7 @@ public class RankManager {
                     if (user != null) {
                         user.refreshPermissions(data);
                     }
+                    Core.i().rankLog("&6" + data.getString("name") + " &ehad rank set to &6" + data.getString("rank") + "&e.");
                 }
             }
         })).start();

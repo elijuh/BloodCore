@@ -10,22 +10,21 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RankListCommand extends SubCommand {
 
-    public RankListCommand(RankCommand parent) {
-        super(parent, "list", ImmutableList.of("l"), "blood.rank.list", "/rank list");
+    public RankListCommand() {
+        super("list", ImmutableList.of("l"), "blood.rank.list", "/rank list");
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         return ImmutableList.of();
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void onExecute(CommandSender sender, String[] args) {
         StringBuilder builder = new StringBuilder("&6&lAll Ranks &7»");
         List<Rank> ranks = Core.i().getRankManager().getRanks().stream().sorted(Comparator.comparingInt(Rank::getPriority)).collect(Collectors.toList());
         for (int i = ranks.size() - 1; i > -1; i--) {

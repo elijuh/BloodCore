@@ -3,7 +3,6 @@ package dev.bloodcore.commands.impl.rank.sub;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
@@ -12,17 +11,17 @@ import java.util.List;
 
 public class RankInfoCommand extends SubCommand {
 
-    public RankInfoCommand(RankCommand parent) {
-        super(parent, "info", ImmutableList.of("i"), "blood.rank.info", "/rank info <rank>");
+    public RankInfoCommand() {
+        super("info", ImmutableList.of("i"), "blood.rank.info", "/rank info <rank>");
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         return ImmutableList.of();
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void onExecute(CommandSender sender, String[] args) {
         if (args.length == 2) {
             Rank rank = Core.i().getRankManager().getRank(args[1]);
             if (rank != null) {
