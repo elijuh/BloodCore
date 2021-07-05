@@ -6,6 +6,7 @@ import dev.bloodcore.commands.impl.essential.FlyCommand;
 import dev.bloodcore.commands.impl.essential.ListCommand;
 import dev.bloodcore.commands.impl.main.BloodCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
+import dev.bloodcore.commands.impl.world.WorldCommand;
 import dev.bloodcore.db.MongoManager;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.User;
@@ -14,6 +15,7 @@ import dev.bloodcore.listeners.BukkitListener;
 import dev.bloodcore.ranks.RankManager;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.ReflectionUtil;
+import dev.bloodcore.world.WorldManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
@@ -33,7 +35,9 @@ public class Core extends JavaPlugin {
     private static Core instance;
 
     private final YamlStorage messages = new YamlStorage(new File(getDataFolder(), "messages.yml"));
+    private final YamlStorage worldConfig = new YamlStorage(new File(getDataFolder(), "worlds.yml"));
 
+    private WorldManager worldManager;
     private MongoManager mongoManager;
     private ChatManager chatManager;
     private RankManager rankManager;
@@ -60,6 +64,10 @@ public class Core extends JavaPlugin {
         }
         messages.save();
 
+        worldManager = new WorldManager();
+
+        worldManager.loadWorlds();
+
         mongoManager = new MongoManager();
         chatManager = new ChatManager();
         rankManager = new RankManager();
@@ -68,6 +76,7 @@ public class Core extends JavaPlugin {
         new RankCommand();
         new ListCommand();
         new FlyCommand();
+        new WorldCommand();
 
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
 
@@ -116,6 +125,7 @@ public class Core extends JavaPlugin {
 
     public void reload() {
         messages.reload();
+        worldConfig.reload();
         reloadConfig();
     }
 }

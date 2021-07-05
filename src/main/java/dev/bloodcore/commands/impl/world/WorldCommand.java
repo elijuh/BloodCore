@@ -3,6 +3,7 @@ package dev.bloodcore.commands.impl.world;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.commands.SubCommand;
+import dev.bloodcore.commands.impl.world.sub.*;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
@@ -17,6 +18,12 @@ public class WorldCommand extends Command {
     public WorldCommand() {
         super("world", ImmutableList.of(), "blood.world.use");
 
+        subcommands.add(new CreateCommand());
+        subcommands.add(new DeleteCommand());
+        subcommands.add(new LoadCommand());
+        subcommands.add(new UnloadCommand());
+        subcommands.add(new TeleportCommand());
+        subcommands.add(new ListCommand());
 
     }
 
@@ -55,11 +62,11 @@ public class WorldCommand extends Command {
             if (sub != null) {
                 sub.execute(sender, args);
             } else {
-                sender.sendMessage(ChatUtil.color("&7Unknown sub-command, use &c/rank help &7for help."));
+                sender.sendMessage(ChatUtil.color("&7Unknown sub-command, use &c/world help &7for help."));
             }
-        } else {
-            help(sender);
+            return;
         }
+        help(sender);
 
 
     }

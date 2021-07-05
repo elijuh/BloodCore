@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public class YamlStorage {
     private final File file;
@@ -67,6 +68,8 @@ public class YamlStorage {
     public void set(String path, Object value) {
         config.set(path, value);
     }
+
+    public Set<String> getKeys(boolean deep){return config.getKeys(deep); }
 
     public void save() {
         try {
