@@ -9,4 +9,5 @@ public class ChatUtil {
     public String color(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
+
 }

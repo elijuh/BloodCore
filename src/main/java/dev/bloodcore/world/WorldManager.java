@@ -35,9 +35,12 @@ public class WorldManager {
     public ChunkGenerator getGenerator(String worldName){
         YamlStorage storage = Core.i().getWorldConfig();
         if(storage.getKeys(false).contains(worldName)){
-            String type = storage.getString(worldName + ".generator");
-            if(type.equalsIgnoreCase("void")){
-                return new VoidGenerator();
+            GeneratorType type = GeneratorType.valueOf(storage.getString(worldName + ".generator"));
+            switch (type){
+                case VOID:
+                    return new VoidGenerator();
+                case NORMAL:
+                    return null;
             }
         }
         return null;

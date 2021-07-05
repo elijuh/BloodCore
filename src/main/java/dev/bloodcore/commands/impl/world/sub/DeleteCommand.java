@@ -5,11 +5,9 @@ import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.utils.ChatUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.List;
@@ -34,28 +32,28 @@ public class DeleteCommand extends SubCommand {
             return;
         }
         String worldName = args[1];
+        World defaultWorld = Core.i().getServer().getWorld("world");
+
         World targetWorld = Core.i().getServer().getWorld(worldName);
-        if (targetWorld == null) {
-            sender.sendMessage(ChatUtil.color("&cWorld doesn't exist!"));
+        if (targetWorld != null) {
+            targetWorld.getPlayers().forEach(player -> {
+                player.teleport(defaultWorld.getSpawnLocation());
+                player.sendMessage(ChatUtil.color(Config.CORE_PREFIX + "&eTeleported you, world is being deleted!"));
+                Core.i().getServer().unloadWorld(targetWorld, false);
+
+            });
+        } else if (!Core.i().getWorldConfig().getKeys(false).contains(worldName)) {
+            sender.sendMessage(ChatUtil.color("&cCouldn't find that world"));
             return;
         }
-        World defaultWorld = Core.i().getServer().getWorld("world");
-        targetWorld.getPlayers().forEach(player -> {
-            player.teleport(defaultWorld.getSpawnLocation());
-            player.sendMessage(ChatUtil.color(Config.CORE_PREFIX + "&eTeleported you, world is being deleted!"));
-        });
-        sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX.getString() + "&eDeleting " + worldName + "..."));
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Core.i().getServer().unloadWorld(targetWorld, false);
-                deleteFolder(targetWorld.getWorldFolder());
-                Core.i().getWorldConfig().set(worldName, null);
-                Core.i().getWorldConfig().save();
-                sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX.getString() + "&aDeleted " + worldName));
-            }
-        }.runTaskLater(Core.i(), 5L);
 
+        sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX.getString() + "&eDeleting " + worldName + "..."));
+
+        File worldFile = new File(Core.i().getServer().getWorldContainer(), worldName);
+        deleteFolder(worldFile);
+        Core.i().getWorldConfig().set(worldName, null);
+        Core.i().getWorldConfig().save();
+        sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX.getString() + "&aDeleted " + worldName));
 
 
     }

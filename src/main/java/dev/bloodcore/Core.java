@@ -2,7 +2,9 @@ package dev.bloodcore;
 
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
+import dev.bloodcore.commands.impl.essential.FeedCommand;
 import dev.bloodcore.commands.impl.essential.FlyCommand;
+import dev.bloodcore.commands.impl.essential.HealCommand;
 import dev.bloodcore.commands.impl.essential.ListCommand;
 import dev.bloodcore.commands.impl.main.BloodCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
@@ -76,7 +78,9 @@ public class Core extends JavaPlugin {
         new RankCommand();
         new ListCommand();
         new FlyCommand();
+        new FeedCommand();
         new WorldCommand();
+        new HealCommand();
 
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
 
@@ -126,6 +130,14 @@ public class Core extends JavaPlugin {
     public void reload() {
         messages.reload();
         worldConfig.reload();
+
+        messages.copyDefaults();
+        for (Config value : Config.values()) {
+            messages.addDefault(value.getPath(), value.getDef());
+        }
+        messages.save();
+
+
         reloadConfig();
     }
 }
