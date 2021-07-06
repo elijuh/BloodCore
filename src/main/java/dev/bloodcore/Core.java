@@ -22,6 +22,7 @@ import dev.bloodcore.punishments.PunishmentManager;
 import dev.bloodcore.ranks.RankManager;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.ReflectionUtil;
+import dev.bloodcore.world.WorldListener;
 import dev.bloodcore.world.WorldManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -96,6 +97,7 @@ public class Core extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
+        Bukkit.getPluginManager().registerEvents(new WorldListener(this), this);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             users.add(new User(p));

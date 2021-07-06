@@ -24,6 +24,7 @@ public class WorldCommand extends Command {
         subcommands.add(new UnloadCommand());
         subcommands.add(new TeleportCommand());
         subcommands.add(new ListCommand());
+        subcommands.add(new SettingsCommand());
 
     }
 

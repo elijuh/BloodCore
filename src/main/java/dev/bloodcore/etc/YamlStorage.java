@@ -1,6 +1,7 @@
 package dev.bloodcore.etc;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -27,6 +28,10 @@ public class YamlStorage {
         }
 
         reload();
+    }
+
+    public ConfigurationSection getValues(String path) {
+        return config.getConfigurationSection(path);
     }
 
     public void copyDefaults() {
@@ -69,7 +74,9 @@ public class YamlStorage {
         config.set(path, value);
     }
 
-    public Set<String> getKeys(boolean deep){return config.getKeys(deep); }
+    public Set<String> getKeys(boolean deep) {
+        return config.getKeys(deep);
+    }
 
     public void save() {
         try {
