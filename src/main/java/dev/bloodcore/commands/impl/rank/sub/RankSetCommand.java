@@ -45,7 +45,7 @@ public class RankSetCommand extends SubCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (args.length == 3) {
-            Document data = Core.i().getMongoManager().getData(args[1]);
+            Document data = Core.i().getMongoManager().getUserFromName(args[1]);
             if (data == null) {
                 sender.sendMessage(ChatUtil.color("&cThat user doesn't exist."));
                 return;

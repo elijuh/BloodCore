@@ -3,7 +3,7 @@ package dev.bloodcore.commands.impl.world.sub;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.Messages;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.world.GeneratorType;
 import org.bukkit.WorldCreator;
@@ -46,13 +46,13 @@ public class CreateCommand extends SubCommand {
                 sender.sendMessage(ChatUtil.color("&cThat generator type does not exist! &7(" + args[2] + ")"));
             }
         }
-        sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX.getString() + "&eCreating " + worldName + "..."));
+        sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX.getString() + "&eCreating " + worldName + "..."));
         Core.i().getWorldConfig().set(worldName + ".generator", generatorType.name());
         Core.i().getWorldConfig().set(worldName + ".autoload", true);
         Core.i().getWorldConfig().save();
 
         Core.i().getServer().createWorld(new WorldCreator(worldName).generator(Core.i().getWorldManager().getGenerator(worldName)));
-        sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX.getString() + "&aCreated " + worldName + " &7Generator: " + generatorType.getName()));
+        sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX.getString() + "&aCreated " + worldName + " &7Generator: " + generatorType.getName()));
 
 
     }

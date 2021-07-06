@@ -3,7 +3,7 @@ package dev.bloodcore.commands.impl.essential;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
@@ -45,7 +45,7 @@ public class HealCommand extends Command {
         if (args.length == 0) {
             {
                 p.setHealth(p.getMaxHealth());
-                p.sendMessage(ChatUtil.color(Config.HEAL_SELF.getString()));
+                p.sendMessage(ChatUtil.color(Messages.HEAL_SELF.getString()));
             }
         } else {
 
@@ -59,8 +59,8 @@ public class HealCommand extends Command {
             User userSender = Core.i().getUser(p.getName());
 
             target.setHealth(target.getMaxHealth());
-            p.sendMessage(ChatUtil.color(Config.HEAL_OTHER.getString().replace("%target%", target.getName()).replace("%target_prefix%", userTarget.getRank().getPrefix()).replace("%state%", "enabled")));
-            target.sendMessage(ChatUtil.color(Config.HEAL_OTHER_RECEIVER.getString().replace("%sender%", p.getName()).replace("%sender_prefix%", userSender.getRank().getPrefix()).replace("%state%", "enabled")));
+            p.sendMessage(ChatUtil.color(Messages.HEAL_OTHER.getString().replace("%target%", target.getName()).replace("%target_prefix%", userTarget.getRank().getPrefix()).replace("%state%", "enabled")));
+            target.sendMessage(ChatUtil.color(Messages.HEAL_OTHER_RECEIVER.getString().replace("%sender%", p.getName()).replace("%sender_prefix%", userSender.getRank().getPrefix()).replace("%state%", "enabled")));
 
 
         }

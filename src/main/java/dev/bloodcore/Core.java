@@ -7,13 +7,18 @@ import dev.bloodcore.commands.impl.essential.FlyCommand;
 import dev.bloodcore.commands.impl.essential.HealCommand;
 import dev.bloodcore.commands.impl.essential.ListCommand;
 import dev.bloodcore.commands.impl.main.BloodCommand;
+import dev.bloodcore.commands.impl.punishments.BanCommand;
+import dev.bloodcore.commands.impl.punishments.UnbanCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.commands.impl.world.WorldCommand;
 import dev.bloodcore.db.MongoManager;
 import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.etc.YamlStorage;
 import dev.bloodcore.listeners.BukkitListener;
+import dev.bloodcore.listeners.PunishmentListener;
+import dev.bloodcore.punishments.PunishmentManager;
 import dev.bloodcore.ranks.RankManager;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.ReflectionUtil;
@@ -43,6 +48,7 @@ public class Core extends JavaPlugin {
     private MongoManager mongoManager;
     private ChatManager chatManager;
     private RankManager rankManager;
+    private PunishmentManager punishmentManager;
 
     public void onLoad() {
         instance = this;
@@ -57,11 +63,13 @@ public class Core extends JavaPlugin {
         Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
 
         getConfig().options().copyDefaults(true);
-        getConfig().addDefault("mongo-db.connection-string", "");
+        for (Config value : Config.values()) {
+            getConfig().addDefault(value.getPath(), value.getDef());
+        }
         saveConfig();
 
         messages.copyDefaults();
-        for (Config value : Config.values()) {
+        for (Messages value : Messages.values()) {
             messages.addDefault(value.getPath(), value.getDef());
         }
         messages.save();
@@ -73,16 +81,21 @@ public class Core extends JavaPlugin {
         mongoManager = new MongoManager();
         chatManager = new ChatManager();
         rankManager = new RankManager();
+        punishmentManager = new PunishmentManager();
 
         new BloodCommand();
         new RankCommand();
         new ListCommand();
         new FlyCommand();
-        new FeedCommand();
         new WorldCommand();
+        new FeedCommand();
         new HealCommand();
 
+        new BanCommand();
+        new UnbanCommand();
+
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             users.add(new User(p));
@@ -128,16 +141,21 @@ public class Core extends JavaPlugin {
     }
 
     public void reload() {
-        messages.reload();
-        worldConfig.reload();
-
-        messages.copyDefaults();
+        reloadConfig();
+        getConfig().options().copyDefaults(true);
         for (Config value : Config.values()) {
+            getConfig().addDefault(value.getPath(), value.getDef());
+        }
+        saveConfig();
+
+        messages.reload();
+        messages.copyDefaults();
+        for (Messages value : Messages.values()) {
             messages.addDefault(value.getPath(), value.getDef());
         }
         messages.save();
 
-
-        reloadConfig();
+        worldConfig.reload();
+        chatManager.reload();
     }
 }

@@ -86,7 +86,7 @@ public class RankEditParentCommand extends SubCommand {
                 sender.sendMessage(ChatUtil.color("&cPlease provide add/remove for arg #1: &7" + args[3]));
                 return;
             }
-            Core.i().getMongoManager().getRanksCollections().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("parents", parents)));
+            Core.i().getMongoManager().getRanksCollection().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("parents", parents)));
         } else {
             sender.sendMessage(ChatUtil.color("&eUsage: &7/" + getUsage()));
         }

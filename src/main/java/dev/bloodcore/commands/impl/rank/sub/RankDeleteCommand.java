@@ -36,7 +36,7 @@ public class RankDeleteCommand extends SubCommand {
             } else if (rank.getId().equalsIgnoreCase("default")) {
                 sender.sendMessage(ChatUtil.color("&7You cannot delete the default rank."));
             } else {
-                Core.i().getMongoManager().getRanksCollections().deleteOne(Filters.eq("_id", rank.getId()));
+                Core.i().getMongoManager().getRanksCollection().deleteOne(Filters.eq("_id", rank.getId()));
             }
         } else {
             sender.sendMessage(ChatUtil.color("&7Usage: &7/rank delete <rank>"));

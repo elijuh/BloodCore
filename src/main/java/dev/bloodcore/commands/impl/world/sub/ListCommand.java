@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
 import dev.bloodcore.utils.ChatUtil;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 

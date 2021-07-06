@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
 
-import java.util.List;
+import java.util.Set;
 
 public class CustomPermissionBase extends PermissibleBase {
     @Getter private final PermissibleBase previous;
@@ -26,8 +26,7 @@ public class CustomPermissionBase extends PermissibleBase {
     @Override
     public boolean hasPermission(String name) {
         name = name.toLowerCase();
-        List<String> permissions = user.getPermissions();
-
+        Set<String> permissions = user.getPermissions();
         for (String perm : permissions) {
             if (perm.equals("-" + name)) {
                 return false;

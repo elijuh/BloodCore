@@ -3,7 +3,7 @@ package dev.bloodcore.commands.impl.main.sub;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.Messages;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
 
@@ -25,6 +25,6 @@ public class BloodReloadCommand extends SubCommand {
         Core.i().reload();
         long end = System.nanoTime();
         double time = Math.round((end - start) / 10000.0) / 100.0;
-        sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX + "&7Configuration reloaded in &a" + time + "ms&7."));
+        sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX + "&7Configuration reloaded in &a" + time + "ms&7."));
     }
 }

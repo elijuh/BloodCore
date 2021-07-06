@@ -7,24 +7,28 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.CollationStrength;
 import com.mongodb.client.model.Filters;
-import dev.bloodcore.Core;
+import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.User;
 import lombok.Getter;
 import org.bson.Document;
-
-import java.util.UUID;
 
 @Getter
 public class MongoManager {
     private final MongoClient client;
     private final MongoCollection<Document> usersCollection;
-    private final MongoCollection<Document> ranksCollections;
+    private final MongoCollection<Document> ranksCollection;
+    private final MongoCollection<Document> punishmentsCollection;
 
     public MongoManager() {
-        client = MongoClients.create(Core.i().getConfig().getString("mongo-db.connection-string"));
+        client = MongoClients.create(Config.MONGO_CONNECTION.getString());
         MongoDatabase database = client.getDatabase("blood_core");
         usersCollection = database.getCollection("users");
-        ranksCollections = database.getCollection("ranks");
+        ranksCollection = database.getCollection("ranks");
+        punishmentsCollection = database.getCollection("punishments");
+
+        if (punishmentsCollection.find(new Document("_id", "last_id")).first() == null) {
+            punishmentsCollection.insertOne(new Document("_id", "last_id").append("value", 0));
+        }
     }
 
     public void updateUser(User user) {
@@ -33,11 +37,11 @@ public class MongoManager {
         usersCollection.updateOne(Filters.eq("uuid", user.uuid()), new Document("$set", update));
     }
 
-    public Document getData(String name) {
+    public Document getUserFromName(String name) {
         return usersCollection.find(new Document("name", name)).collation(Collation.builder().locale("en").collationStrength(CollationStrength.PRIMARY).build()).first();
     }
 
-    public Document getData(UUID uuid) {
-        return usersCollection.find(new Document("uuid", uuid.toString())).first();
+    public Document getUserFromUUID(String uuid) {
+        return usersCollection.find(new Document("uuid", uuid)).first();
     }
 }

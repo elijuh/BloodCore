@@ -13,10 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -29,7 +26,7 @@ public class User {
     public User(Player player) {
         this.player = player;
 
-        Document data = Core.i().getMongoManager().getData(player.getUniqueId());
+        Document data = Core.i().getMongoManager().getUserFromUUID(player.getUniqueId().toString());
         if (data == null) {
             data = new Document("uuid", uuid())
                     .append("name", name())
@@ -83,11 +80,11 @@ public class User {
         return player.getAddress().getAddress().getHostAddress();
     }
 
-    public List<String> getPermissions() {
-        List<String> permissions = new ArrayList<>(this.userPermissions);
+    public Set<String> getPermissions() {
+        Set<String> permissions = new HashSet<>(this.userPermissions);
         if (rank != null) {
             permissions.addAll(rank.getPermissions());
-            for (String parent : rank.getParents()) {
+            for (String parent : rank.gettAllParents()) {
                 Rank parentRank = Core.i().getRankManager().getRank(parent);
                 if (parentRank != null) {
                     permissions.addAll(parentRank.getPermissions());

@@ -3,7 +3,7 @@ package dev.bloodcore.commands.impl.world.sub;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.Messages;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ import java.util.List;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class DeleteCommand extends SubCommand {
     public DeleteCommand() {
-        super("delete", ImmutableList.of("remove"), "blood.admin", "/world delete");
+        super("delete", ImmutableList.of("remove"), "blood.admin", "/world delete <name>");
 
     }
 
@@ -38,7 +38,7 @@ public class DeleteCommand extends SubCommand {
         if (targetWorld != null) {
             targetWorld.getPlayers().forEach(player -> {
                 player.teleport(defaultWorld.getSpawnLocation());
-                player.sendMessage(ChatUtil.color(Config.CORE_PREFIX + "&eTeleported you, world is being deleted!"));
+                player.sendMessage(ChatUtil.color(Messages.CORE_PREFIX + "&eTeleported you, world is being deleted!"));
                 Core.i().getServer().unloadWorld(targetWorld, false);
 
             });
@@ -47,13 +47,13 @@ public class DeleteCommand extends SubCommand {
             return;
         }
 
-        sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX.getString() + "&eDeleting " + worldName + "..."));
+        sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX.getString() + "&eDeleting " + worldName + "..."));
 
         File worldFile = new File(Core.i().getServer().getWorldContainer(), worldName);
         deleteFolder(worldFile);
         Core.i().getWorldConfig().set(worldName, null);
         Core.i().getWorldConfig().save();
-        sender.sendMessage(ChatUtil.color(Config.CORE_PREFIX.getString() + "&aDeleted " + worldName));
+        sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX.getString() + "&aDeleted " + worldName));
 
 
     }

@@ -3,7 +3,7 @@ package dev.bloodcore.commands.impl.essential;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
@@ -47,10 +47,10 @@ public class FlyCommand extends Command {
                 p.setFlying(false);
                 p.setAllowFlight(false);
 
-                p.sendMessage(ChatUtil.color(Config.FLY_TOGGLE_SELF.getString().replace("%state%", "disabled")));
+                p.sendMessage(ChatUtil.color(Messages.FLY_TOGGLE_SELF.getString().replace("%state%", "disabled")));
             } else {
                 p.setAllowFlight(true);
-                p.sendMessage(ChatUtil.color(Config.FLY_TOGGLE_SELF.getString().replace("%state%", "enabled")));
+                p.sendMessage(ChatUtil.color(Messages.FLY_TOGGLE_SELF.getString().replace("%state%", "enabled")));
             }
         } else {
 
@@ -65,14 +65,14 @@ public class FlyCommand extends Command {
             if (target.getAllowFlight()) {
                 target.setAllowFlight(false);
                 target.setFlying(false);
-                p.sendMessage(ChatUtil.color(Config.FLY_TOGGLE_OTHER.getString().replace("%target%", target.getName()).replace("%target_prefix%", userTarget.getRank().getPrefix()).replace("%state%", "disabled")));
-                target.sendMessage(ChatUtil.color(Config.FLY_TOGGLE_OTHER_RECEIVER.getString().replace("%sender%", p.getName()).replace("%sender_prefix%", userSender.getRank().getPrefix()).replace("%state%", "disabled")));
+                p.sendMessage(ChatUtil.color(Messages.FLY_TOGGLE_OTHER.getString().replace("%target%", target.getName()).replace("%target_prefix%", userTarget.getRank().getPrefix()).replace("%state%", "disabled")));
+                target.sendMessage(ChatUtil.color(Messages.FLY_TOGGLE_OTHER_RECEIVER.getString().replace("%sender%", p.getName()).replace("%sender_prefix%", userSender.getRank().getPrefix()).replace("%state%", "disabled")));
 
             } else {
                 target.setAllowFlight(true);
                 target.setFlying(true);
-                p.sendMessage(ChatUtil.color(Config.FLY_TOGGLE_OTHER.getString().replace("%target%", target.getName()).replace("%target_prefix%", userTarget.getRank().getPrefix()).replace("%state%", "enabled")));
-                target.sendMessage(ChatUtil.color(Config.FLY_TOGGLE_OTHER_RECEIVER.getString().replace("%sender%", p.getName()).replace("%sender_prefix%", userSender.getRank().getPrefix()).replace("%state%", "enabled")));
+                p.sendMessage(ChatUtil.color(Messages.FLY_TOGGLE_OTHER.getString().replace("%target%", target.getName()).replace("%target_prefix%", userTarget.getRank().getPrefix()).replace("%state%", "enabled")));
+                target.sendMessage(ChatUtil.color(Messages.FLY_TOGGLE_OTHER_RECEIVER.getString().replace("%sender%", p.getName()).replace("%sender_prefix%", userSender.getRank().getPrefix()).replace("%state%", "enabled")));
             }
 
         }

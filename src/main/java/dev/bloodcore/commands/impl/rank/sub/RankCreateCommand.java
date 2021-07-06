@@ -47,7 +47,7 @@ public class RankCreateCommand extends SubCommand {
                     .append("priority", priority)
                     .append("permissions", new HashSet<>())
                     .append("parents", new HashSet<>());
-            Core.i().getMongoManager().getRanksCollections().insertOne(data);
+            Core.i().getMongoManager().getRanksCollection().insertOne(data);
         } else {
             sender.sendMessage(ChatUtil.color("&eUsage: &7/rank create <rank> <priority>"));
         }

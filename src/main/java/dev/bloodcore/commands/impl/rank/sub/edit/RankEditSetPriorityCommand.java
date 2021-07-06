@@ -35,7 +35,7 @@ public class RankEditSetPriorityCommand extends SubCommand {
                 sender.sendMessage(ChatUtil.color("&cInvalid integer for arg #1: &7" + args[3]));
                 return;
             }
-            Core.i().getMongoManager().getRanksCollections().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("priority", priority)));
+            Core.i().getMongoManager().getRanksCollection().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("priority", priority)));
         }
     }
 }

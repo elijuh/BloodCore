@@ -20,7 +20,7 @@ public class Rank {
     private Set<String> permissions;
     private Set<String> parents;
 
-    public Set<String> getParents() {
+    public Set<String> gettAllParents() {
         Set<String> parents = new HashSet<>();
         for (String parent : this.parents) {
             parents.add(parent);

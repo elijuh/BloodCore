@@ -36,7 +36,7 @@ public class RankEditSetPrefixCommand extends SubCommand {
             if (prefix.startsWith("\"") && prefix.endsWith("\"")) {
                 prefix = prefix.substring(1, prefix.length() - 1);
             }
-            Core.i().getMongoManager().getRanksCollections().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("prefix", prefix)));
+            Core.i().getMongoManager().getRanksCollection().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("prefix", prefix)));
         }
     }
 }

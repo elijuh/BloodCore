@@ -3,7 +3,7 @@ package dev.bloodcore.commands.impl.essential;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
@@ -46,7 +46,7 @@ public class FeedCommand extends Command {
             {
                 p.setFoodLevel(20);
                 p.setSaturation(40);
-                p.sendMessage(ChatUtil.color(Config.FEED_SELF.getString()));
+                p.sendMessage(ChatUtil.color(Messages.FEED_SELF.getString()));
             }
         } else {
 
@@ -63,8 +63,8 @@ public class FeedCommand extends Command {
             target.setFoodLevel(20);
             target.setSaturation(40);
 
-            p.sendMessage(ChatUtil.color(Config.FEED_OTHER.getString().replace("%target%", target.getName()).replace("%target_prefix%", userTarget.getRank().getPrefix()).replace("%state%", "enabled")));
-            target.sendMessage(ChatUtil.color(Config.FEED_OTHER_RECEIVER.getString().replace("%sender%", p.getName()).replace("%sender_prefix%", userSender.getRank().getPrefix()).replace("%state%", "enabled")));
+            p.sendMessage(ChatUtil.color(Messages.FEED_OTHER.getString().replace("%target%", target.getName()).replace("%target_prefix%", userTarget.getRank().getPrefix()).replace("%state%", "enabled")));
+            target.sendMessage(ChatUtil.color(Messages.FEED_OTHER_RECEIVER.getString().replace("%sender%", p.getName()).replace("%sender_prefix%", userSender.getRank().getPrefix()).replace("%state%", "enabled")));
 
 
         }
