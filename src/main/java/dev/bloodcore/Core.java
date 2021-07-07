@@ -12,6 +12,10 @@ import dev.bloodcore.commands.impl.punishments.UnbanCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
 import dev.bloodcore.commands.impl.world.WorldCommand;
 import dev.bloodcore.db.MongoManager;
+import dev.bloodcore.disguise.DisguiseCommand;
+import dev.bloodcore.disguise.DisguiseListener;
+import dev.bloodcore.disguise.DisguiseManager;
+import dev.bloodcore.disguise.util.HTTPUtility;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
@@ -49,6 +53,7 @@ public class Core extends JavaPlugin {
     private MongoManager mongoManager;
     private ChatManager chatManager;
     private RankManager rankManager;
+    private DisguiseManager disguiseManager;
     private PunishmentManager punishmentManager;
 
     public void onLoad() {
@@ -83,6 +88,7 @@ public class Core extends JavaPlugin {
         chatManager = new ChatManager();
         rankManager = new RankManager();
         punishmentManager = new PunishmentManager();
+        disguiseManager = new DisguiseManager(this, new HTTPUtility(this));
 
         new BloodCommand();
         new RankCommand();
@@ -94,10 +100,13 @@ public class Core extends JavaPlugin {
 
         new BanCommand();
         new UnbanCommand();
+        new DisguiseCommand();
 
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
         Bukkit.getPluginManager().registerEvents(new WorldListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new DisguiseListener(disguiseManager), this);
+
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             users.add(new User(p));
