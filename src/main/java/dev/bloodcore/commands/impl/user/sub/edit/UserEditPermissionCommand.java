@@ -1,4 +1,4 @@
-package dev.bloodcore.commands.impl.rank.sub.edit;
+package dev.bloodcore.commands.impl.user.sub.edit;
 
 import com.google.common.collect.ImmutableList;
 import com.mongodb.client.model.Filters;
@@ -12,10 +12,10 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RankEditPermissionCommand extends SubCommand {
+public class UserEditPermissionCommand extends SubCommand {
     private final List<String > options = ImmutableList.of("add", "remove");
-    public RankEditPermissionCommand() {
-        super("permission", ImmutableList.of("perm", "p"), "blood.rank.edit.permission", "/rank edit <rank> perm <add|remove> <permission>");
+    public UserEditPermissionCommand() {
+        super("permission", ImmutableList.of("perm", "p"), "blood.user.edit.permission", "/user edit <user> perm <add|remove> <permission>");
     }
 
     @Override
@@ -35,35 +35,37 @@ public class RankEditPermissionCommand extends SubCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (args.length == 5) {
-            Document data = Core.i().getRankManager().getRankData(args[1]);
-            if (data == null) {
-                sender.sendMessage(ChatUtil.color("&7That rank doesn't exist."));
+            Document user = Core.i().getMongoManager().getUserFromName(args[1]);
+            if (user == null) {
+                sender.sendMessage(ChatUtil.color("&7That user doesn't exist."));
                 return;
             }
             String permission = args[4].toLowerCase();
-            List<String> permissions = data.getList("permissions", String.class);
+            List<String> permissions = user.getList("permissions", String.class);
             if (permissions == null) {
                 permissions = new ArrayList<>();
             }
             if (args[3].equalsIgnoreCase("add")) {
                 if (!permissions.contains(permission)) {
                     permissions.add(permission);
+                    sender.sendMessage(ChatUtil.color("&aYou have added permission &r" + permission + " &ato &r" + user.getString("display")));
                 } else {
-                    sender.sendMessage(ChatUtil.color("&cThat rank already has permission " + permission + "."));
+                    sender.sendMessage(ChatUtil.color("&cThat user already has permission " + permission + "."));
                     return;
                 }
             } else if (args[3].equalsIgnoreCase("remove")) {
                 if (permissions.contains(permission)) {
                     permissions.remove(permission);
+                    sender.sendMessage(ChatUtil.color("&aYou have removed permission &r" + permission + " &afrom &r" + user.getString("display")));
                 } else {
-                    sender.sendMessage(ChatUtil.color("&cThat rank doesn't have permission " + permission + "."));
+                    sender.sendMessage(ChatUtil.color("&cThat user doesn't have permission " + permission + "."));
                     return;
                 }
             } else {
                 sender.sendMessage(ChatUtil.color("&cPlease provide add/remove for arg #1: &7" + args[3]));
                 return;
             }
-            Core.i().getMongoManager().getRanksCollection().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("permissions", permissions)));
+            Core.i().getMongoManager().getUsersCollection().updateOne(Filters.eq("uuid", user.getString("uuid")), new Document("$set", new Document("permissions", permissions)));
         } else {
             sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
         }

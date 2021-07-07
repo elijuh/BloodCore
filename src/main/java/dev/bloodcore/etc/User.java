@@ -101,8 +101,19 @@ public class User {
     }
 
     public void refreshPermissions(Document data) {
-        userPermissions.clear();
-        userPermissions.addAll(data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class));
+        List<String> permissions = data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class);
+        for (String perm : permissions) {
+            if (!userPermissions.contains(perm)) {
+                userPermissions.add(perm);
+                Core.i().rankLog("&6" + name() + " &ehad permission added &6" + perm + "&e.");
+            }
+        }
+        for (String perm : new ArrayList<>(userPermissions)) {
+            if (!permissions.contains(perm)) {
+                userPermissions.remove(perm);
+                Core.i().rankLog("&6" + name() + " &ehad permission removed &6" + perm + "&e.");
+            }
+        }
         setRank(Core.i().getRankManager().getRank(data.getString("rank"), true));
     }
 }

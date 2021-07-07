@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class TeleportCommand extends SubCommand {
-    public TeleportCommand(){
+public class WorldTeleportCommand extends SubCommand {
+    public WorldTeleportCommand(){
         super("tp", ImmutableList.of("teleport", "goto"), "blood.admin", "/world tp <name>");
 
     }

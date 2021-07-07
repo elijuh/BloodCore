@@ -7,6 +7,7 @@ import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RankInfoCommand extends SubCommand {
@@ -30,18 +31,28 @@ public class RankInfoCommand extends SubCommand {
                         .append("\n&ePriority: &f").append(rank.getPriority())
                         .append("\n&ePrefix: &7(&r").append(rank.getPrefix()).append("Player&7)")
                         .append("\n&6Permissions:\n&8» &a");
-                for (String permission : rank.getPermissions()) {
-                    builder.append(permission).append(", ");
-                }
-                if (builder.toString().endsWith(", ")) {
-                    builder.delete(builder.length() - 2, builder.length());
+                List<String> permissions = new ArrayList<>(rank.getPermissions());
+                if (!permissions.isEmpty()) {
+                    String permission = permissions.get(0);
+                    builder.append(permission);
+                    for (int i = 1; i < permissions.size(); i++) {
+                        permission = permissions.get(i);
+                        builder.append("&7, &a").append(permission);
+                    }
+                } else {
+                    builder.append("&8(&7None&8)");
                 }
                 builder.append("\n&6Parents:\n&8» &a");
-                for (String parent : rank.getParents()) {
-                    builder.append(parent).append(", ");
-                }
-                if (builder.toString().endsWith(", ")) {
-                    builder.delete(builder.length() - 2, builder.length());
+                List<String> parents = new ArrayList<>(rank.getParents());
+                if (!parents.isEmpty()) {
+                    String parent = parents.get(0);
+                    builder.append(parent);
+                    for (int i = 1; i < parents.size(); i++) {
+                        parent = parents.get(i);
+                        builder.append("&7, &a").append(parent);
+                    }
+                } else {
+                    builder.append("&8(&7None&8)");
                 }
                 sender.sendMessage(ChatUtil.color("&8&m-------------------------------"));
                 sender.sendMessage(ChatUtil.color(builder.toString()));
@@ -50,7 +61,7 @@ public class RankInfoCommand extends SubCommand {
                 sender.sendMessage(ChatUtil.color("&7That rank doesn't exist."));
             }
         } else {
-            sender.sendMessage(ChatUtil.color("&eUsage: &7" + getUsage()));
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
         }
     }
 }

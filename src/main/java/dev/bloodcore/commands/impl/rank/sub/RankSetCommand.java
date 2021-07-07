@@ -4,11 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.mongodb.client.model.Filters;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.etc.User;
 import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.utils.ChatUtil;
+import dev.bloodcore.utils.PlayerUtil;
 import org.bson.Document;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
@@ -23,13 +24,7 @@ public class RankSetCommand extends SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
-            List<String> completion = new ArrayList<>();
-            for (User user : Core.i().getUsers()) {
-                if (StringUtil.startsWithIgnoreCase(user.name(), args[1])) {
-                    completion.add(user.name());
-                }
-            }
-            return completion;
+            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender) : PlayerUtil.getAllPlayers();
         } else if (args.length == 3) {
             List<String> completion = new ArrayList<>();
             for (Rank rank : Core.i().getRankManager().getRanks()) {
@@ -59,9 +54,11 @@ public class RankSetCommand extends SubCommand {
                 sender.sendMessage(ChatUtil.color("&cUser already has that rank."));
                 return;
             }
-            Core.i().getMongoManager().getUsersCollection().updateOne(Filters.eq("uuid", data.getString("uuid")), new Document("$set", new Document("rank", rank.getId())));
+            sender.sendMessage(ChatUtil.color("&aYou have set the rank of &r" + data.getString("display") + " &ato &r" + rank.getColor() + rank.getId() + "&a!"));
+            Document update = new Document("$set", new Document("rank", rank.getId()).append("display", rank.getColor() + data.getString("name")));
+            Core.i().getMongoManager().getUsersCollection().updateOne(Filters.eq("uuid", data.getString("uuid")), update);
         } else {
-            sender.sendMessage(ChatUtil.color("&eUsage: &7" + getUsage()));
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
         }
     }
 }

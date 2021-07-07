@@ -58,8 +58,10 @@ public class RankManager {
                 if (data != null) {
                     User user = Core.i().getUser(data.getString("name"));
                     if (user != null) {
-                        if (!data.getString("rank").equals(user.getRank().getId())) {
-                            Core.i().rankLog("&6" + data.getString("name") + " &ehad rank set to &6" + data.getString("rank") + "&e.");
+                        Rank rank = Core.i().getRankManager().getRank(data.getString("rank"), true);
+                        if (!rank.getId().equals(user.getRank().getId())) {
+                            user.setRank(rank);
+                            Core.i().rankLog("&6" + data.getString("name") + " &ehad rank set to &6" + rank.getId() + "&e.");
                         }
                         user.refreshPermissions(data);
                     }

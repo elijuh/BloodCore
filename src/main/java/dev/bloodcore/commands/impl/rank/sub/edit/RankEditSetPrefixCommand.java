@@ -37,6 +37,8 @@ public class RankEditSetPrefixCommand extends SubCommand {
                 prefix = prefix.substring(1, prefix.length() - 1);
             }
             Core.i().getMongoManager().getRanksCollection().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("prefix", prefix)));
+        } else {
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
         }
     }
 }

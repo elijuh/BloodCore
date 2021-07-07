@@ -1,9 +1,10 @@
-package dev.bloodcore.commands.impl.world;
+package dev.bloodcore.commands.impl.user;
 
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.commands.SubCommand;
-import dev.bloodcore.commands.impl.world.sub.*;
+import dev.bloodcore.commands.impl.user.sub.UserEditCommand;
+import dev.bloodcore.commands.impl.user.sub.UserInfoCommand;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
@@ -12,20 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WorldCommand extends Command {
+public class UserCommand extends Command {
     private final List<SubCommand> subcommands = new ArrayList<>();
 
-    public WorldCommand() {
-        super("world", ImmutableList.of(), "blood.command.world");
-
-        subcommands.add(new WorldCreateCommand());
-        subcommands.add(new WorldDeleteCommand());
-        subcommands.add(new WorldLoadCommand());
-        subcommands.add(new WorldUnloadCommand());
-        subcommands.add(new WorldTeleportCommand());
-        subcommands.add(new WorldListCommand());
-        subcommands.add(new WorldSettingsCommand());
-
+    public UserCommand() {
+        super("user", ImmutableList.of(), "blood.command.user");
+        subcommands.add(new UserInfoCommand());
+        subcommands.add(new UserEditCommand());
     }
 
     @Override
@@ -63,13 +57,11 @@ public class WorldCommand extends Command {
             if (sub != null) {
                 sub.execute(sender, args);
             } else {
-                sender.sendMessage(ChatUtil.color("&7Unknown sub-command, use &c/world help &7for help."));
+                sender.sendMessage(ChatUtil.color("&7Unknown sub-command, use &c/user help &7for help."));
             }
-            return;
+        } else {
+            help(sender);
         }
-        help(sender);
-
-
     }
 
     private void help(CommandSender sender) {
@@ -78,7 +70,7 @@ public class WorldCommand extends Command {
         if (subs.isEmpty()) {
             sender.sendMessage(ChatUtil.color("&eYou don't have permission to use any subcommands."));
         } else {
-            StringBuilder help = new StringBuilder("&6&lWorld Commands &7»");
+            StringBuilder help = new StringBuilder("&6&lUser Commands &7»");
             for (SubCommand sub : getAvailableSubs(sender)) {
                 help.append("\n&6» &e").append(sub.getUsage());
             }

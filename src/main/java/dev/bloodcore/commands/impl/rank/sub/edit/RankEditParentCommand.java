@@ -88,7 +88,7 @@ public class RankEditParentCommand extends SubCommand {
             }
             Core.i().getMongoManager().getRanksCollection().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("parents", parents)));
         } else {
-            sender.sendMessage(ChatUtil.color("&eUsage: &7/" + getUsage()));
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
         }
     }
 }

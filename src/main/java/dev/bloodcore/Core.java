@@ -10,6 +10,7 @@ import dev.bloodcore.commands.impl.main.BloodCommand;
 import dev.bloodcore.commands.impl.punishments.BanCommand;
 import dev.bloodcore.commands.impl.punishments.UnbanCommand;
 import dev.bloodcore.commands.impl.rank.RankCommand;
+import dev.bloodcore.commands.impl.user.UserCommand;
 import dev.bloodcore.commands.impl.world.WorldCommand;
 import dev.bloodcore.db.MongoManager;
 import dev.bloodcore.disguise.DisguiseCommand;
@@ -97,9 +98,12 @@ public class Core extends JavaPlugin {
         new WorldCommand();
         new FeedCommand();
         new HealCommand();
+        new UserCommand();
 
         new BanCommand();
         new UnbanCommand();
+
+
         new DisguiseCommand();
 
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);

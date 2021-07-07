@@ -12,8 +12,8 @@ import org.bukkit.generator.ChunkGenerator;
 import java.io.File;
 import java.util.List;
 
-public class LoadCommand extends SubCommand {
-    public LoadCommand() {
+public class WorldLoadCommand extends SubCommand {
+    public WorldLoadCommand() {
         super("load", ImmutableList.of(), "blood.admin", "/world load <name>");
 
     }
@@ -26,7 +26,7 @@ public class LoadCommand extends SubCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            sender.sendMessage(ChatUtil.color("&cUsage: /world load <worldname>"));
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
             return;
         }
         String worldName = args[1];

@@ -12,8 +12,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
-public class UnloadCommand extends SubCommand {
-    public UnloadCommand(){
+public class WorldUnloadCommand extends SubCommand {
+    public WorldUnloadCommand(){
         super("unload", ImmutableList.of(), "blood.admin", "/world unload <name>");
 
     }

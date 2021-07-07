@@ -10,8 +10,8 @@ import org.bukkit.command.CommandSender;
 import java.util.HashSet;
 import java.util.List;
 
-public class ListCommand extends SubCommand {
-    public ListCommand() {
+public class WorldListCommand extends SubCommand {
+    public WorldListCommand() {
         super("list", ImmutableList.of(), "blood.admin", "/world list");
 
     }

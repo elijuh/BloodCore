@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListCommand extends Command {
     public ListCommand() {
@@ -36,13 +37,18 @@ public class ListCommand extends Command {
                 builder.append("&r, ").append(rank.getColor()).append(rank.getId());
             }
         }
-        long players = Core.i().getUsers().stream()
-                .filter(user -> !user.getData().containsKey("vanished") || !(boolean) user.get("vanished")).count();
+        List<User> users = Core.i().getUsers().stream()
+                .filter(user -> !user.getData().containsKey("vanished") || !(boolean) user.get("vanished"))
+                .sorted(Comparator.comparingInt(user -> user.getRank().getPriority()))
+                .collect(Collectors.toList());
 
-        builder.append("\n&f(").append(players).append("/").append(Bukkit.getMaxPlayers()).append("&f): ");
-        for (User user : Core.i().getUsers()) {
-            if (!user.getData().containsKey("vanished") || !(boolean) user.get("vanished")) {
-                builder.append(user.getRank().getColor()).append(user.name());
+        builder.append("\n&f(").append(users.size()).append("/").append(Bukkit.getMaxPlayers()).append("&f): ");
+        if (users.size() > 0) {
+            User user = users.get(0);
+            builder.append(user.getRank().getColor()).append(user.name());
+            for (int i = 1; i < users.size(); i++) {
+                user = users.get(i);
+                builder.append("&r, ").append(user.getRank().getColor()).append(user.name());
             }
         }
         sender.sendMessage(ChatUtil.color("&7&m-----------------------------"));

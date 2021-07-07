@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class SettingsCommand extends SubCommand {
-    public SettingsCommand() {
+public class WorldSettingsCommand extends SubCommand {
+    public WorldSettingsCommand() {
         super("setting", ImmutableList.of("settings"), "blood.admin", "/world settings <setting> [value]");
 
     }
@@ -44,6 +44,8 @@ public class SettingsCommand extends SubCommand {
                 sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX.getString() + "&aUpdated setting: &6" + worldName + "&a will now have " + (!current ? "clear weather" : "all weather")));
 
             }
+        } else {
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
         }
 
     }

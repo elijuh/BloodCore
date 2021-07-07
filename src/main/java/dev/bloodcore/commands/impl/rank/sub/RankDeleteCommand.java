@@ -39,7 +39,7 @@ public class RankDeleteCommand extends SubCommand {
                 Core.i().getMongoManager().getRanksCollection().deleteOne(Filters.eq("_id", rank.getId()));
             }
         } else {
-            sender.sendMessage(ChatUtil.color("&7Usage: &7/rank delete <rank>"));
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
         }
     }
 }

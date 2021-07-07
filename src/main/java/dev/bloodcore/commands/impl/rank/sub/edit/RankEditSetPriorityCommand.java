@@ -36,6 +36,8 @@ public class RankEditSetPriorityCommand extends SubCommand {
                 return;
             }
             Core.i().getMongoManager().getRanksCollection().updateOne(Filters.eq("_id", data.getString("_id")), new Document("$set", new Document("priority", priority)));
+        } else {
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
         }
     }
 }

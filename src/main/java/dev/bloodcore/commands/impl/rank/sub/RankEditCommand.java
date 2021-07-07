@@ -40,7 +40,7 @@ public class RankEditCommand extends SubCommand {
                     completion.add(sub.getName());
                 }
                 for (String alias : sub.getAliases()) {
-                    if (StringUtil.startsWithIgnoreCase(alias, args[0])) {
+                    if (StringUtil.startsWithIgnoreCase(alias, args[2])) {
                         completion.add(alias);
                     }
                 }
@@ -75,7 +75,7 @@ public class RankEditCommand extends SubCommand {
         if (subs.isEmpty()) {
             sender.sendMessage(ChatUtil.color("&eYou don't have permission to use any subcommands."));
         } else {
-            StringBuilder help = new StringBuilder("&6&lRank Commands &7»");
+            StringBuilder help = new StringBuilder("&6&lRank Edit Commands &7»");
             for (SubCommand sub : getAvailableSubs(sender)) {
                 help.append("\n&6» &e").append(sub.getUsage());
             }

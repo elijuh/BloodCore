@@ -13,8 +13,8 @@ import java.io.File;
 import java.util.List;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class DeleteCommand extends SubCommand {
-    public DeleteCommand() {
+public class WorldDeleteCommand extends SubCommand {
+    public WorldDeleteCommand() {
         super("delete", ImmutableList.of("remove"), "blood.admin", "/world delete <name>");
 
     }

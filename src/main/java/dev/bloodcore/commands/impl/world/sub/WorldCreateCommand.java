@@ -12,8 +12,8 @@ import org.bukkit.command.ConsoleCommandSender;
 
 import java.util.List;
 
-public class CreateCommand extends SubCommand {
-    public CreateCommand() {
+public class WorldCreateCommand extends SubCommand {
+    public WorldCreateCommand() {
         super("create", ImmutableList.of("new"), "blood.admin", "/world create <name> [generator]");
 
     }
@@ -27,7 +27,7 @@ public class CreateCommand extends SubCommand {
     public void onExecute(CommandSender sender, String[] args) {
         if (sender instanceof ConsoleCommandSender) return;
         if (args.length == 1) {
-            sender.sendMessage(ChatUtil.color("&cUsage: /world create <worldname>"));
+            sender.sendMessage(ChatUtil.color("&cUsage: " + getUsage()));
             return;
         }
         String worldName = args[1];
