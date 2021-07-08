@@ -17,16 +17,18 @@ public class WorldManager {
         Set<String> entries = Core.i().getWorldConfig().getKeys(false);
         for (String entry : entries) {
             if(Core.i().getWorldConfig().getBoolean(entry + ".autoload")){
-                System.out.println("autload set for " + entry);
                 String generator = Core.i().getWorldConfig().getString(entry + ".generator");
-                if(generator == null){
-                    System.out.println("aaaa");
-                    continue;
+                WorldCreator creator = new WorldCreator(entry);
+                if (generator != null) {
+                    GeneratorType type = GeneratorType.valueOf(generator);
+                    switch (type){
+                        case VOID: {
+                            creator.generator(new VoidGenerator());
+                            break;
+                        }
+                    }
                 }
-                if(generator.equalsIgnoreCase("void")){
-                    System.out.println("void deez nuts");
-                    new WorldCreator(entry).generator(new VoidGenerator()).createWorld();
-                }
+                creator.createWorld();
             }
         }
 

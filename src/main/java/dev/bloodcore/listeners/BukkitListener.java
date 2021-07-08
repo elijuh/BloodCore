@@ -23,7 +23,7 @@ public class BukkitListener implements Listener {
 
     @EventHandler
     public void on(PlayerQuitEvent e) {
-        User user = Core.i().getUser(e.getPlayer().getName());
+        User user = Core.i().getUser(e.getPlayer());
         if (user != null) {
             user.unload();
             Core.i().getUsers().remove(user);
@@ -32,7 +32,7 @@ public class BukkitListener implements Listener {
 
     @EventHandler
     public void on(PlayerKickEvent e) {
-        User user = Core.i().getUser(e.getPlayer().getName());
+        User user = Core.i().getUser(e.getPlayer());
         if (user != null) {
             user.unload();
             Core.i().getUsers().remove(user);
@@ -41,7 +41,7 @@ public class BukkitListener implements Listener {
 
     @EventHandler
     public void on(AsyncPlayerChatEvent e) {
-        User user = Core.i().getUser(e.getPlayer().getName());
+        User user = Core.i().getUser(e.getPlayer());
         if (user == null) {
             e.setCancelled(true);
         } else {

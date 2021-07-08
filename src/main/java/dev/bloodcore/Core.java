@@ -2,32 +2,26 @@ package dev.bloodcore;
 
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.commands.impl.essential.FeedCommand;
-import dev.bloodcore.commands.impl.essential.FlyCommand;
-import dev.bloodcore.commands.impl.essential.HealCommand;
-import dev.bloodcore.commands.impl.essential.ListCommand;
-import dev.bloodcore.commands.impl.main.BloodCommand;
-import dev.bloodcore.commands.impl.punishments.BanCommand;
-import dev.bloodcore.commands.impl.punishments.UnbanCommand;
-import dev.bloodcore.commands.impl.rank.RankCommand;
-import dev.bloodcore.commands.impl.user.UserCommand;
-import dev.bloodcore.commands.impl.world.WorldCommand;
+import dev.bloodcore.commands.essential.*;
+import dev.bloodcore.commands.main.BloodCommand;
+import dev.bloodcore.commands.punishments.BanCommand;
+import dev.bloodcore.commands.punishments.UnbanCommand;
+import dev.bloodcore.commands.rank.RankCommand;
+import dev.bloodcore.commands.user.UserCommand;
+import dev.bloodcore.commands.world.WorldCommand;
 import dev.bloodcore.db.MongoManager;
-import dev.bloodcore.disguise.DisguiseCommand;
-import dev.bloodcore.disguise.DisguiseListener;
-import dev.bloodcore.disguise.DisguiseManager;
-import dev.bloodcore.disguise.util.HTTPUtility;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.etc.YamlStorage;
 import dev.bloodcore.listeners.BukkitListener;
 import dev.bloodcore.listeners.PunishmentListener;
+import dev.bloodcore.listeners.WorldListener;
 import dev.bloodcore.punishments.PunishmentManager;
 import dev.bloodcore.ranks.RankManager;
 import dev.bloodcore.utils.ChatUtil;
+import dev.bloodcore.utils.HTTPUtil;
 import dev.bloodcore.utils.ReflectionUtil;
-import dev.bloodcore.world.WorldListener;
 import dev.bloodcore.world.WorldManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -37,25 +31,32 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Getter
 public class Core extends JavaPlugin {
+    private final DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy h:mm aa");
     private final Set<User> users = new HashSet<>();
     private static Core instance;
 
     private final YamlStorage messages = new YamlStorage(new File(getDataFolder(), "messages.yml"));
     private final YamlStorage worldConfig = new YamlStorage(new File(getDataFolder(), "worlds.yml"));
 
+    private BloodExpansion expansion;
+
     private WorldManager worldManager;
     private MongoManager mongoManager;
     private ChatManager chatManager;
     private RankManager rankManager;
-    private DisguiseManager disguiseManager;
     private PunishmentManager punishmentManager;
+
+    private HTTPUtil httpUtility;
 
     public void onLoad() {
         instance = this;
@@ -68,6 +69,7 @@ public class Core extends JavaPlugin {
             return;
         }
         Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
+        dateFormat.setTimeZone(TimeZone.getDefault());
 
         getConfig().options().copyDefaults(true);
         for (Config value : Config.values()) {
@@ -81,6 +83,11 @@ public class Core extends JavaPlugin {
         }
         messages.save();
 
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            expansion = new BloodExpansion();
+            expansion.register();
+        }
+
         worldManager = new WorldManager();
 
         worldManager.loadWorlds();
@@ -89,7 +96,8 @@ public class Core extends JavaPlugin {
         chatManager = new ChatManager();
         rankManager = new RankManager();
         punishmentManager = new PunishmentManager();
-        disguiseManager = new DisguiseManager(this, new HTTPUtility(this));
+
+        httpUtility = new HTTPUtil();
 
         new BloodCommand();
         new RankCommand();
@@ -98,18 +106,17 @@ public class Core extends JavaPlugin {
         new WorldCommand();
         new FeedCommand();
         new HealCommand();
+        new PingCommand();
         new UserCommand();
+        new DisguiseCommand();
+        new GamemodeCommand();
 
         new BanCommand();
         new UnbanCommand();
 
-
-        new DisguiseCommand();
-
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
-        Bukkit.getPluginManager().registerEvents(new WorldListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new DisguiseListener(disguiseManager), this);
+        Bukkit.getPluginManager().registerEvents(new WorldListener(), this);
 
 
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -131,6 +138,19 @@ public class Core extends JavaPlugin {
             }
             users.clear();
         }
+
+        if (expansion != null && expansion.isRegistered()) {
+            expansion.unregister();
+        }
+    }
+
+    public User getUser(Player player) {
+        for (User user : users) {
+            if (user.getPlayer() == player) {
+                return user;
+            }
+        }
+        return null;
     }
 
     public User getUser(String name) {

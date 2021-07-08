@@ -1,5 +1,7 @@
 package dev.bloodcore.utils;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -9,6 +11,7 @@ import org.bukkit.permissions.PermissibleBase;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
@@ -147,5 +150,18 @@ public class ReflectionUtil {
         }
 
         return null;
+    }
+
+    public GameProfile getGameProfile(Player player) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Object handle = player.getClass().getMethod("getHandle").invoke(player);
+
+        return (GameProfile) handle.getClass()
+                .getSuperclass()
+                .getDeclaredMethod("getProfile")
+                .invoke(handle);
+    }
+
+    public Property getTexturesProperty(GameProfile profile) {
+        return profile.getProperties().get("textures").stream().findFirst().orElse(null);
     }
 }

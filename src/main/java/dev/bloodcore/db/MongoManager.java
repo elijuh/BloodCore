@@ -32,7 +32,11 @@ public class MongoManager {
     }
 
     public void updateUser(User user) {
-        Document update = new Document("name", user.name()).append("ip", user.ip()).append("display", user.getRank().getColor() + user.name());
+        Document current = getUserFromUUID(user.uuid());
+        Document update = new Document("name", user.name())
+                .append("ip", user.ip())
+                .append("display", user.getRank().getColor() + user.name())
+                .append("data", current.get("data", Document.class).append("lastJoin", System.currentTimeMillis()));
 
         usersCollection.updateOne(Filters.eq("uuid", user.uuid()), new Document("$set", update));
     }

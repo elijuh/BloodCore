@@ -32,7 +32,8 @@ public class User {
                     .append("name", name())
                     .append("ip", "")
                     .append("display", "&7" + name())
-                    .append("rank", "Default");
+                    .append("rank", "Default")
+                    .append("data", new Document("firstJoin", System.currentTimeMillis()).append("lastJoin", System.currentTimeMillis()));
 
             Core.i().getMongoManager().getUsersCollection().insertOne(data);
         }
@@ -53,6 +54,11 @@ public class User {
         if (permissible instanceof CustomPermissionBase) {
             CustomPermissionBase permissionBase = (CustomPermissionBase) permissible;
             ReflectionUtil.setPermissibleBase(player, permissionBase.getPrevious());
+        }
+
+        Disguise disguise = get("disguise");
+        if (disguise != null) {
+            disguise.remove();
         }
     }
 
@@ -115,5 +121,9 @@ public class User {
             }
         }
         setRank(Core.i().getRankManager().getRank(data.getString("rank"), true));
+    }
+
+    public boolean isHidden() {
+        return data.containsKey("vanished") && (boolean) data.get("vanished");
     }
 }
