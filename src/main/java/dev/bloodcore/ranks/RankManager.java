@@ -38,7 +38,6 @@ public class RankManager {
         new Thread(()-> {
             MongoCursor<ChangeStreamDocument<Document>> iterator = Core.i().getMongoManager().getRanksCollection().watch().iterator();
             while (iterator.hasNext() && listening) {
-                System.out.println('1');
                 ChangeStreamDocument<Document> bson = iterator.next();
                 if (bson.getDocumentKey() != null) {
                     if (bson.getOperationType() == OperationType.INSERT || bson.getOperationType() == OperationType.UPDATE) {
@@ -66,7 +65,6 @@ public class RankManager {
         new Thread(()-> {
             MongoCursor<ChangeStreamDocument<Document>> iterator = Core.i().getMongoManager().getUsersCollection().watch().iterator();
             while (iterator.hasNext() && listening) {
-                System.out.println('2');
                 ChangeStreamDocument<Document> bson = iterator.next();
                 if (bson.getOperationType() == OperationType.UPDATE && bson.getDocumentKey() != null) {
                     Document data = Core.i().getMongoManager().getUsersCollection().find(bson.getDocumentKey()).first();
