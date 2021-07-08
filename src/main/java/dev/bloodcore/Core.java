@@ -63,11 +63,6 @@ public class Core extends JavaPlugin {
     }
 
     public void onEnable() {
-        if (Bukkit.getServicesManager().getRegistration(Bukkit.getPluginManager().getPlugin("BloodLib").getClass()) != null) {
-            Bukkit.getLogger().log(Level.SEVERE, "Plugin cannot be reloaded! shutting down..");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
         Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
         dateFormat.setTimeZone(TimeZone.getDefault());
 
@@ -125,19 +120,18 @@ public class Core extends JavaPlugin {
     }
 
     public void onDisable() {
-        if (Bukkit.getServicesManager().getRegistration(Bukkit.getPluginManager().getPlugin("BloodLib").getClass()) == null) {
-            Bukkit.getServicesManager().register(Bukkit.getPluginManager().getPlugin("BloodLib").getClass(), null, Bukkit.getPluginManager().getPlugin("BloodLib"), ServicePriority.Normal);
-            try {
-                CommandMap map = (CommandMap) ReflectionUtil.getField(Bukkit.getServer().getClass(), "commandMap").get(Bukkit.getServer());
-                ReflectionUtil.unregisterCommands(map, Command.getRegisteredCommands());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            for (User user : users) {
-                user.unload();
-            }
-            users.clear();
+        Bukkit.getServicesManager().register(Bukkit.getPluginManager().getPlugin("BloodLib").getClass(), null, Bukkit.getPluginManager().getPlugin("BloodLib"), ServicePriority.Normal);
+        try {
+            CommandMap map = (CommandMap) ReflectionUtil.getField(Bukkit.getServer().getClass(), "commandMap").get(Bukkit.getServer());
+            ReflectionUtil.unregisterCommands(map, Command.getRegisteredCommands());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        for (User user : users) {
+            user.unload();
+        }
+        users.clear();
+        rankManager.setListening(false);
 
         if (expansion != null && expansion.isRegistered()) {
             expansion.unregister();
