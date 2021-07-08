@@ -15,5 +15,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongodb-driver-sync:3.11.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:bson:3.11.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongodb-driver-core:3.11.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.10.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:19.0.0" level="project" />
   </component>
 </module>

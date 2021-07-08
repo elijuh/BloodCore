@@ -107,6 +107,7 @@ public class Core extends JavaPlugin {
         new UserCommand();
         new DisguiseCommand();
         new GamemodeCommand();
+        new RulesCommand();
 
         new BanCommand();
         new UnbanCommand();
@@ -181,6 +182,7 @@ public class Core extends JavaPlugin {
         }
         saveConfig();
 
+
         messages.reload();
         messages.copyDefaults();
         for (Messages value : Messages.values()) {
@@ -189,6 +191,8 @@ public class Core extends JavaPlugin {
         messages.save();
 
         worldConfig.reload();
+
         chatManager.reload();
+
     }
 }
