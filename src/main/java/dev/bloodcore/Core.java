@@ -21,6 +21,7 @@ import dev.bloodcore.punishments.PunishmentManager;
 import dev.bloodcore.ranks.RankManager;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.HTTPUtil;
+import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.utils.ReflectionUtil;
 import dev.bloodcore.world.WorldManager;
 import lombok.Getter;
@@ -43,6 +44,7 @@ import java.util.logging.Logger;
 public class Core extends JavaPlugin {
     private final DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy h:mm aa");
     private final Set<User> users = new HashSet<>();
+    private final Set<DisablingThread> threads = new HashSet<>();
     private static Core instance;
 
     private final YamlStorage messages = new YamlStorage(new File(getDataFolder(), "messages.yml"));
@@ -131,7 +133,9 @@ public class Core extends JavaPlugin {
             user.unload();
         }
         users.clear();
-        rankManager.setListening(false);
+        for (DisablingThread thread : threads) {
+            thread.disable();
+        }
 
         if (expansion != null && expansion.isRegistered()) {
             expansion.unregister();
