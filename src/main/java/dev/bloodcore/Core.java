@@ -21,10 +21,10 @@ import dev.bloodcore.ranks.RankManager;
 import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.HTTPUtil;
-import dev.bloodcore.utils.LibManager;
 import dev.bloodcore.utils.ReflectionUtil;
 import dev.bloodcore.world.WorldManager;
 import lombok.Getter;
+import org.apache.commons.io.FileUtils;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
@@ -68,7 +68,6 @@ public class Core extends JavaPlugin {
     }
 
     public void onEnable() {
-        new LibManager();
         Bukkit.getScheduler().runTaskAsynchronously(this, ()-> {
             loadClasses();
             Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
@@ -190,11 +189,28 @@ public class Core extends JavaPlugin {
     }
 
     public void loadClasses() {
-        File lib = new File(getDataFolder(), "lib");
-        if (!lib.exists()) {
-            lib.mkdir();
+        File dir = new File(getDataFolder(), "lib");
+        if (!dir.exists()) {
+            dir.mkdir();
         }
-        File[] files = lib.listFiles();
+        try {
+            File file = new File(Core.i().getDataFolder() + "/lib");
+            if (!file.exists()) {
+                file.mkdir();
+            }
+            for (String lib : new String[]{"mongo.jar"}) {
+                File library = new File(file.getPath() + "/" + lib);
+                if(!library.exists()) {
+                    System.out.println("Downloading " + lib + "...");
+                    FileUtils.copyURLToFile(new URL("https://hardstyles.me/bloodcore/" + lib), library);
+                    System.out.println("Download successful: " + lib);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        File[] files = dir.listFiles();
         if (files == null) return;
         URLClassLoader loader = (URLClassLoader) getClassLoader();
         Method addUrl;
