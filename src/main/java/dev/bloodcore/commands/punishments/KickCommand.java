@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.User;
 import dev.bloodcore.punishments.PType;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.PlayerUtil;
@@ -13,9 +14,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class BanCommand extends Command {
-    public BanCommand() {
-        super("ban", ImmutableList.of("b"), "blood.command.ban");
+public class KickCommand extends Command {
+    public KickCommand() {
+        super("kick", ImmutableList.of(), "blood.command.kick");
     }
 
     @Override
@@ -29,14 +30,9 @@ public class BanCommand extends Command {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (args.length > 1) {
-            Document user = Core.i().getMongoManager().getUserFromName(args[0]);
+            User user = Core.i().getUser(args[0]);
             if (user == null) {
-                sender.sendMessage(ChatUtil.color("&cThat player has never joined!"));
-                return;
-            }
-
-            if (Core.i().getPunishmentManager().getActivePunishment(user, PType.BAN) != null) {
-                sender.sendMessage(ChatUtil.color("&cTarget is already banned!"));
+                sender.sendMessage(ChatUtil.color("&cThat player is not online!"));
                 return;
             }
 
@@ -62,9 +58,9 @@ public class BanCommand extends Command {
             }
 
             Document data = new Document("_id", Core.i().getPunishmentManager().nextId())
-                    .append("uuid", user.getString("uuid"))
-                    .append("ip", user.getString("ip"))
-                    .append("type", PType.BAN.name())
+                    .append("uuid", user.uuid())
+                    .append("ip", user.ip())
+                    .append("type", PType.KICK.name())
                     .append("time", System.currentTimeMillis())
                     .append("length", -1L)
                     .append("reason", reason)
@@ -74,7 +70,7 @@ public class BanCommand extends Command {
 
             Core.i().getMongoManager().getPunishmentsCollection().insertOne(data);
         } else {
-            sender.sendMessage(ChatUtil.color("&cUsage: /ban <player> [-s] <reason...>"));
+            sender.sendMessage(ChatUtil.color("&cUsage: /kick <player> [-s] <reason...>"));
         }
     }
 }

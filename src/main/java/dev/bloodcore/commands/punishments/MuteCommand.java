@@ -13,9 +13,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class BanCommand extends Command {
-    public BanCommand() {
-        super("ban", ImmutableList.of("b"), "blood.command.ban");
+public class MuteCommand extends Command {
+    public MuteCommand() {
+        super("mute", ImmutableList.of(), "blood.command.mute");
     }
 
     @Override
@@ -35,8 +35,8 @@ public class BanCommand extends Command {
                 return;
             }
 
-            if (Core.i().getPunishmentManager().getActivePunishment(user, PType.BAN) != null) {
-                sender.sendMessage(ChatUtil.color("&cTarget is already banned!"));
+            if (Core.i().getPunishmentManager().getActivePunishment(user, PType.MUTE) != null) {
+                sender.sendMessage(ChatUtil.color("&cTarget is already muted!"));
                 return;
             }
 
@@ -64,7 +64,7 @@ public class BanCommand extends Command {
             Document data = new Document("_id", Core.i().getPunishmentManager().nextId())
                     .append("uuid", user.getString("uuid"))
                     .append("ip", user.getString("ip"))
-                    .append("type", PType.BAN.name())
+                    .append("type", PType.MUTE.name())
                     .append("time", System.currentTimeMillis())
                     .append("length", -1L)
                     .append("reason", reason)
@@ -74,7 +74,7 @@ public class BanCommand extends Command {
 
             Core.i().getMongoManager().getPunishmentsCollection().insertOne(data);
         } else {
-            sender.sendMessage(ChatUtil.color("&cUsage: /ban <player> [-s] <reason...>"));
+            sender.sendMessage(ChatUtil.color("&cUsage: /mute <player> [-s] <reason...>"));
         }
     }
 }

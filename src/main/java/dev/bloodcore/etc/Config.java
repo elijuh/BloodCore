@@ -15,8 +15,6 @@ public enum Config {
     GLOBAL_CHAT_FORMAT("chat.format", "%rank_prefix%%player% &8» &r%message%"),
     RULES("rules", Lists.newArrayList("#1", "#2"));
 
-
-    private static final FileConfiguration config = Core.i().getConfig();
     private final String path;
     private final Object def;
 
@@ -26,11 +24,11 @@ public enum Config {
     }
 
     public int getInt() {
-        return config.getInt(path);
+        return Core.i().getConfig().getInt(path);
     }
 
     public String getString() {
-        return config.getString(path);
+        return Core.i().getConfig().getString(path);
     }
 
 
@@ -40,6 +38,6 @@ public enum Config {
     }
 
     public List<String> getStrings(){
-        return config.getStringList(path);
+        return Core.i().getConfig().getStringList(path);
     }
 }

@@ -13,9 +13,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class BanCommand extends Command {
-    public BanCommand() {
-        super("ban", ImmutableList.of("b"), "blood.command.ban");
+public class TempmuteCommand extends Command {
+    public TempmuteCommand() {
+        super("tempmute", ImmutableList.of(), "blood.command.tempmute");
     }
 
     @Override
@@ -28,15 +28,23 @@ public class BanCommand extends Command {
 
     @Override
     public void onExecute(CommandSender sender, String[] args) {
-        if (args.length > 1) {
+        if (args.length > 2) {
             Document user = Core.i().getMongoManager().getUserFromName(args[0]);
             if (user == null) {
                 sender.sendMessage(ChatUtil.color("&cThat player has never joined!"));
                 return;
             }
 
-            if (Core.i().getPunishmentManager().getActivePunishment(user, PType.BAN) != null) {
-                sender.sendMessage(ChatUtil.color("&cTarget is already banned!"));
+            if (Core.i().getPunishmentManager().getActivePunishment(user, PType.MUTE) != null) {
+                sender.sendMessage(ChatUtil.color("&cTarget is already muted!"));
+                return;
+            }
+
+            long length;
+            try {
+                length = Core.i().getPunishmentManager().parseDate(args[1]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage(ChatUtil.color("&cError in date format for: &7" + args[1]));
                 return;
             }
 
@@ -44,7 +52,7 @@ public class BanCommand extends Command {
 
             StringBuilder builder = new StringBuilder();
 
-            for (int i = 1; i < args.length; i++) {
+            for (int i = 2; i < args.length; i++) {
                 if (args[i].equalsIgnoreCase("-s") && !silent) {
                     silent = true;
                 } else {
@@ -56,17 +64,13 @@ public class BanCommand extends Command {
             }
 
             String reason = builder.toString();
-            if (reason.isEmpty()) {
-                sender.sendMessage(ChatUtil.color("&cPlease provide a reason."));
-                return;
-            }
 
             Document data = new Document("_id", Core.i().getPunishmentManager().nextId())
                     .append("uuid", user.getString("uuid"))
                     .append("ip", user.getString("ip"))
-                    .append("type", PType.BAN.name())
+                    .append("type", PType.MUTE.name())
                     .append("time", System.currentTimeMillis())
-                    .append("length", -1L)
+                    .append("length", length)
                     .append("reason", reason)
                     .append("silent", silent)
                     .append("executor", sender instanceof Player ? ((Player) sender).getUniqueId().toString() : null)
@@ -74,7 +78,7 @@ public class BanCommand extends Command {
 
             Core.i().getMongoManager().getPunishmentsCollection().insertOne(data);
         } else {
-            sender.sendMessage(ChatUtil.color("&cUsage: /ban <player> [-s] <reason...>"));
+            sender.sendMessage(ChatUtil.color("&cUsage: /tempmute <player> <time> [-s] <reason...>"));
         }
     }
 }

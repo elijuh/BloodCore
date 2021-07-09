@@ -4,8 +4,7 @@ import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.commands.essential.*;
 import dev.bloodcore.commands.main.BloodCommand;
-import dev.bloodcore.commands.punishments.BanCommand;
-import dev.bloodcore.commands.punishments.UnbanCommand;
+import dev.bloodcore.commands.punishments.*;
 import dev.bloodcore.commands.rank.RankCommand;
 import dev.bloodcore.commands.user.UserCommand;
 import dev.bloodcore.commands.world.WorldCommand;
@@ -111,6 +110,14 @@ public class Core extends JavaPlugin {
 
         new BanCommand();
         new UnbanCommand();
+        new TempbanCommand();
+        new MuteCommand();
+        new UnmuteCommand();
+        new TempmuteCommand();
+        new IPBanCommand();
+        new IPUnbanCommand();
+        new KickCommand();
+        new WarnCommand();
 
         Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);

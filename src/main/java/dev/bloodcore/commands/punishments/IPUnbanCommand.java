@@ -3,7 +3,6 @@ package dev.bloodcore.commands.punishments;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.etc.Config;
 import dev.bloodcore.punishments.PType;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.PlayerUtil;
@@ -13,9 +12,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class BanCommand extends Command {
-    public BanCommand() {
-        super("ban", ImmutableList.of("b"), "blood.command.ban");
+public class IPUnbanCommand extends Command {
+    public IPUnbanCommand() {
+        super("ipunban", ImmutableList.of("unbanip", "unipban", "unblacklist"), "blood.command.ipunban");
     }
 
     @Override
@@ -28,15 +27,10 @@ public class BanCommand extends Command {
 
     @Override
     public void onExecute(CommandSender sender, String[] args) {
-        if (args.length > 1) {
+        if (args.length > 0) {
             Document user = Core.i().getMongoManager().getUserFromName(args[0]);
             if (user == null) {
                 sender.sendMessage(ChatUtil.color("&cThat player has never joined!"));
-                return;
-            }
-
-            if (Core.i().getPunishmentManager().getActivePunishment(user, PType.BAN) != null) {
-                sender.sendMessage(ChatUtil.color("&cTarget is already banned!"));
                 return;
             }
 
@@ -55,26 +49,19 @@ public class BanCommand extends Command {
                 }
             }
 
-            String reason = builder.toString();
-            if (reason.isEmpty()) {
-                sender.sendMessage(ChatUtil.color("&cPlease provide a reason."));
-                return;
-            }
+            String reason = builder.toString().isEmpty() ? "None" : builder.toString();
 
-            Document data = new Document("_id", Core.i().getPunishmentManager().nextId())
-                    .append("uuid", user.getString("uuid"))
-                    .append("ip", user.getString("ip"))
-                    .append("type", PType.BAN.name())
-                    .append("time", System.currentTimeMillis())
-                    .append("length", -1L)
+            Document info = new Document("by", sender instanceof Player ? ((Player) sender).getUniqueId().toString() : null)
                     .append("reason", reason)
-                    .append("silent", silent)
-                    .append("executor", sender instanceof Player ? ((Player) sender).getUniqueId().toString() : null)
-                    .append("server", Config.SERVER_NAME.getString());
+                    .append("silent", silent);
 
-            Core.i().getMongoManager().getPunishmentsCollection().insertOne(data);
+            if (Core.i().getPunishmentManager().getActivePunishment(user, PType.IPBAN) != null) {
+                Core.i().getPunishmentManager().remove(user, PType.IPBAN, info);
+            } else {
+                sender.sendMessage(ChatUtil.color("&cThat player is not ipbanned!"));
+            }
         } else {
-            sender.sendMessage(ChatUtil.color("&cUsage: /ban <player> [-s] <reason...>"));
+            sender.sendMessage(ChatUtil.color("&cUsage: /ipunban <player> [-s] [reason...]"));
         }
     }
 }

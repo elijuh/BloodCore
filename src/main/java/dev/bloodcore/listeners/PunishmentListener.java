@@ -21,8 +21,16 @@ public class PunishmentListener implements Listener {
         if (data == null) {
             return;
         }
-        Document ban = manager.getActiveBan(data);
-        if (ban == null) return;
+        Document ban = manager.getIPBan(e.getAddress().getHostAddress());
+        if (ban == null) {
+            ban = manager.getActivePunishment(data, PType.IPBAN);
+        }
+        if (ban == null) {
+            ban = manager.getActivePunishment(data, PType.BAN);
+        }
+        if (ban == null) {
+            return;
+        }
         PType type = PType.valueOf(ban.getString("type"));
 
         if (type == PType.IPBAN) {
@@ -36,7 +44,7 @@ public class PunishmentListener implements Listener {
             e.setKickMessage(ChatUtil.color(message));
         } else if (type == PType.BAN) {
             String message = Messages.BAN_SCREEN.getString()
-                    .replace("%bantype%", "banned")
+                    .replace("%bantype%", ban.getLong("length") == -1 ? "banned" : "temporarily banned")
                     .replace("%length%", ban.getLong("length") == -1 ? "Permanent" : manager.formatMillis(ban.getLong("time") + ban.getLong("length") - System.currentTimeMillis()))
                     .replace("%reason%", ban.getString("reason"))
                     .replace("%appeal%", Messages.APPEAL.getString());

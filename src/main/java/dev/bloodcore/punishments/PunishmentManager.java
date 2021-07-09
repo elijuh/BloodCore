@@ -18,17 +18,9 @@ public class PunishmentManager {
         t.start();
     }
 
-    public boolean isIPBanned(String ip) {
-        if (ip == null) {
-            return false;
-        }
-
-        for (Document data : manager.getPunishmentsCollection().find(new Document("ip", ip))) {
-            if (!data.containsKey("removed")) {
-                return true;
-            }
-        }
-        return false;
+    public Document getIPBan(String ip) {
+        Bson filter = Filters.and(Filters.eq("ip", ip), Filters.eq("type", PType.IPBAN.name()), Filters.not(Filters.exists("removed")));
+        return manager.getPunishmentsCollection().find(filter).first();
     }
 
     public Document getActivePunishment(Document user, PType type) {
@@ -52,24 +44,6 @@ public class PunishmentManager {
 
     public MongoCursor<Document> getPunishments(String uuid, PType type) {
         return manager.getPunishmentsCollection().find(new Document("uuid", uuid).append("type", type.name())).iterator();
-
-    }
-
-    public Document getActiveBan(Document user) {
-        if (isIPBanned(user.getString("ip"))) {
-            Bson filter = Filters.and(Filters.eq("uuid", user.getString("uuid")), Filters.eq("ip", user.getString("ip")), Filters.not(Filters.exists("removed")));
-            return manager.getPunishmentsCollection().find(filter).first();
-        } else if (getActivePunishment(user, PType.BAN) != null || getActivePunishment(user, PType.IPBAN) != null) {
-            Bson filter = Filters.and(Filters.eq("uuid", user.getString("uuid")), Filters.not(Filters.exists("removed")));
-            for (Document data : manager.getPunishmentsCollection().find(filter)) {
-                long time = data.getLong("time");
-                long length = data.getLong("length");
-                if (length == -1 || time - length > System.currentTimeMillis()) {
-                    return data;
-                }
-            }
-        }
-        return null;
     }
 
     public MongoCursor<Document> getAccounts(String ip) {
@@ -128,5 +102,38 @@ public class PunishmentManager {
             }
         }
         return format.toString();
+    }
+
+    public long parseDate(String input) throws NumberFormatException {
+        if (input.length() < 2) {
+            throw new NumberFormatException();
+        }
+        long amount = Integer.parseInt(input.substring(0, input.length() - 1));
+        switch (input.toCharArray()[input.length() - 1]) {
+            case 'y': {
+                return amount * 31536000000L;
+            }
+            case 'M': {
+                return amount * 2592000000L;
+            }
+            case 'w': {
+                return amount * 604800000L;
+            }
+            case 'd': {
+                return amount * 86400000L;
+            }
+            case 'h': {
+                return amount * 3600000L;
+            }
+            case 'm': {
+                return amount * 60000L;
+            }
+            case 's': {
+                return amount * 1000L;
+            }
+            default: {
+                throw new NumberFormatException();
+            }
+        }
     }
 }
