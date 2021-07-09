@@ -8,20 +8,24 @@ import java.io.IOException;
 import java.net.URL;
 
 public class LibManager {
+    private final String[] libs = new String[]{"mongo.jar"};
     public LibManager() {
         try {
             File file = new File(Core.i().getDataFolder() + "/lib");
             if (!file.exists()) {
                 file.mkdir();
             }
-            File library = new File(file.getPath() + "/mongo.jar");
-            if(!library.exists()){
-                System.out.println("Mongo jar not found!");
-                FileUtils.copyURLToFile(new URL("https://hardstyles.me/bloodcore/mongo.jar"), library);
-                System.out.println("Downloaded jar.");
-            }else{
-                System.out.println("Mongo jar WAS found!");
+            for (String lib : libs) {
+                File library = new File(file.getPath() + "/" + lib);
+                if(!library.exists()){
+                    System.out.println("Missing lib " + lib + ", fetching...");
+                    FileUtils.copyURLToFile(new URL("https://hardstyles.me/bloodcore/" + lib), library);
+                    System.out.println("Fetched " + lib);
+                }else{
+                    System.out.println("Library " + lib + " found.");
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
