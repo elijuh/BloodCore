@@ -18,9 +18,9 @@ import dev.bloodcore.listeners.PunishmentListener;
 import dev.bloodcore.listeners.WorldListener;
 import dev.bloodcore.punishments.PunishmentManager;
 import dev.bloodcore.ranks.RankManager;
+import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.HTTPUtil;
-import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.utils.ReflectionUtil;
 import dev.bloodcore.world.WorldManager;
 import lombok.Getter;
@@ -28,10 +28,12 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
@@ -65,74 +67,76 @@ public class Core extends JavaPlugin {
     }
 
     public void onEnable() {
-        Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
-        dateFormat.setTimeZone(TimeZone.getDefault());
+        Bukkit.getScheduler().runTaskAsynchronously(this, ()-> {
+            loadClasses();
+            Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
+            dateFormat.setTimeZone(TimeZone.getDefault());
 
-        getConfig().options().copyDefaults(true);
-        for (Config value : Config.values()) {
-            getConfig().addDefault(value.getPath(), value.getDef());
-        }
-        saveConfig();
+            getConfig().options().copyDefaults(true);
+            for (Config value : Config.values()) {
+                getConfig().addDefault(value.getPath(), value.getDef());
+            }
+            saveConfig();
 
-        messages.copyDefaults();
-        for (Messages value : Messages.values()) {
-            messages.addDefault(value.getPath(), value.getDef());
-        }
-        messages.save();
+            messages.copyDefaults();
+            for (Messages value : Messages.values()) {
+                messages.addDefault(value.getPath(), value.getDef());
+            }
+            messages.save();
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            expansion = new BloodExpansion();
-            expansion.register();
-        }
+            if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                expansion = new BloodExpansion();
+                expansion.register();
+            }
 
-        worldManager = new WorldManager();
+            worldManager = new WorldManager();
 
-        worldManager.loadWorlds();
+            worldManager.loadWorlds();
 
-        mongoManager = new MongoManager();
-        chatManager = new ChatManager();
-        rankManager = new RankManager();
-        punishmentManager = new PunishmentManager();
+            mongoManager = new MongoManager();
+            chatManager = new ChatManager();
+            rankManager = new RankManager();
+            punishmentManager = new PunishmentManager();
 
-        httpUtility = new HTTPUtil();
+            httpUtility = new HTTPUtil();
 
-        new BloodCommand();
-        new RankCommand();
-        new ListCommand();
-        new FlyCommand();
-        new WorldCommand();
-        new FeedCommand();
-        new HealCommand();
-        new PingCommand();
-        new UserCommand();
-        new DisguiseCommand();
-        new GamemodeCommand();
-        new RulesCommand();
-        new MessageCommand();
+            new BloodCommand();
+            new RankCommand();
+            new ListCommand();
+            new FlyCommand();
+            new WorldCommand();
+            new FeedCommand();
+            new HealCommand();
+            new PingCommand();
+            new UserCommand();
+            new DisguiseCommand();
+            new GamemodeCommand();
+            new RulesCommand();
+            new MessageCommand();
 
-        new BanCommand();
-        new UnbanCommand();
-        new TempbanCommand();
-        new MuteCommand();
-        new UnmuteCommand();
-        new TempmuteCommand();
-        new IPBanCommand();
-        new IPUnbanCommand();
-        new KickCommand();
-        new WarnCommand();
+            new BanCommand();
+            new UnbanCommand();
+            new TempbanCommand();
+            new MuteCommand();
+            new UnmuteCommand();
+            new TempmuteCommand();
+            new IPBanCommand();
+            new IPUnbanCommand();
+            new KickCommand();
+            new WarnCommand();
 
-        Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
-        Bukkit.getPluginManager().registerEvents(new WorldListener(), this);
+            Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
+            Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
+            Bukkit.getPluginManager().registerEvents(new WorldListener(), this);
 
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            users.add(new User(p));
-        }
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                users.add(new User(p));
+            }
+        });
     }
 
     public void onDisable() {
-        Bukkit.getServicesManager().register(Bukkit.getPluginManager().getPlugin("BloodLib").getClass(), null, Bukkit.getPluginManager().getPlugin("BloodLib"), ServicePriority.Normal);
         try {
             CommandMap map = (CommandMap) ReflectionUtil.getField(Bukkit.getServer().getClass(), "commandMap").get(Bukkit.getServer());
             ReflectionUtil.unregisterCommands(map, Command.getRegisteredCommands());
@@ -181,6 +185,33 @@ public class Core extends JavaPlugin {
             }
         }
         Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&6&lRank Log &8» &e" + log));
+    }
+
+    public void loadClasses() {
+        File lib = new File(getDataFolder(), "lib");
+        if (!lib.exists()) {
+            lib.mkdir();
+        }
+        File[] files = lib.listFiles();
+        if (files == null) return;
+        URLClassLoader loader = (URLClassLoader) getClassLoader();
+        Method addUrl;
+        try {
+            addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            addUrl.setAccessible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        for (File file : files) {
+            try {
+                URL url = file.toURI().toURL();
+                addUrl.invoke(loader, url);
+                System.out.println("Loaded library: " + file.getName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void reload() {

@@ -1,7 +1,5 @@
 name: BloodCore
 version: ${project.version}
-depend:
-  - BloodLib
 softdepend:
   - PlaceholderAPI
 authors:
