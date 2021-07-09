@@ -16,7 +16,7 @@ public class BloodExpansion extends PlaceholderExpansion {
 
     @Override
     public String getAuthor() {
-        return "elijuh";
+        return "elijuh, Hardstyles";
     }
 
     @Override
