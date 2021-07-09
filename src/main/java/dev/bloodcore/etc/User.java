@@ -19,7 +19,8 @@ import java.util.*;
 @Setter
 public class User {
     private final Map<String, Object> data = new HashMap<>();
-    private final List<String> userPermissions;
+    private final List<String> userPermissions, ignoreList;
+    private final Document settings;
     private final Player player;
     private Rank rank;
 
@@ -33,6 +34,9 @@ public class User {
                     .append("ip", "")
                     .append("display", "&7" + name())
                     .append("rank", "Default")
+                    .append("permissions", new ArrayList<>())
+                    .append("ignoreList", new ArrayList<>())
+                    .append("settings", Core.i().getDefaultSettings())
                     .append("data", new Document("firstJoin", System.currentTimeMillis()).append("lastJoin", System.currentTimeMillis()));
 
             Core.i().getMongoManager().getUsersCollection().insertOne(data);
@@ -45,6 +49,8 @@ public class User {
         }
 
         userPermissions = data.getList("permissions", String.class) == null ? new ArrayList<>() : data.getList("permissions", String.class);
+        ignoreList = data.getList("ignoreList", String.class) == null ? new ArrayList<>() : data.getList("ignoreList", String.class);
+        settings = data.get("settings", Document.class);
 
         ReflectionUtil.setPermissibleBase(player, new CustomPermissionBase(this));
     }
@@ -60,6 +66,9 @@ public class User {
         if (disguise != null) {
             disguise.remove();
         }
+
+        Document update = new Document("settings", settings);
+        Core.i().getMongoManager().getUsersCollection().updateOne(Filters.eq("uuid", uuid()), new Document("$set", update));
     }
 
     public void msg(String s) {

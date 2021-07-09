@@ -24,6 +24,7 @@ import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.utils.ReflectionUtil;
 import dev.bloodcore.world.WorldManager;
 import lombok.Getter;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
@@ -107,6 +108,7 @@ public class Core extends JavaPlugin {
         new DisguiseCommand();
         new GamemodeCommand();
         new RulesCommand();
+        new MessageCommand();
 
         new BanCommand();
         new UnbanCommand();
@@ -189,17 +191,18 @@ public class Core extends JavaPlugin {
         }
         saveConfig();
 
-
         messages.reload();
         messages.copyDefaults();
         for (Messages value : Messages.values()) {
             messages.addDefault(value.getPath(), value.getDef());
         }
         messages.save();
-
         worldConfig.reload();
-
         chatManager.reload();
+    }
 
+    public Document getDefaultSettings() {
+        return new Document("messageSounds", true)
+                .append("messageToggle", true);
     }
 }
