@@ -63,21 +63,25 @@ public class Core extends JavaPlugin {
 
     private HTTPUtil httpUtility;
 
-    public void onLoad() {
-        instance = this;
-    }
-
     public void onEnable() {
+        httpUtility = new HTTPUtil();
+        getConfig().options().copyDefaults(true);
+        for (Config value : Config.values()) {
+            getConfig().addDefault(value.getPath(), value.getDef());
+        }
+        saveConfig();
+        String license = getConfig().getString("license");
+        if (!httpUtility.validate(license)) {
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&cInvalid license! plugin disabling..."));
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+        instance = this;
+
         Bukkit.getScheduler().runTaskAsynchronously(this, ()-> {
             loadClasses();
             Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
             dateFormat.setTimeZone(TimeZone.getDefault());
-
-            getConfig().options().copyDefaults(true);
-            for (Config value : Config.values()) {
-                getConfig().addDefault(value.getPath(), value.getDef());
-            }
-            saveConfig();
 
             messages.copyDefaults();
             for (Messages value : Messages.values()) {
@@ -98,8 +102,6 @@ public class Core extends JavaPlugin {
             chatManager = new ChatManager();
             rankManager = new RankManager();
             punishmentManager = new PunishmentManager();
-
-            httpUtility = new HTTPUtil();
 
             new BloodCommand();
             new RankCommand();
@@ -138,22 +140,24 @@ public class Core extends JavaPlugin {
     }
 
     public void onDisable() {
-        try {
-            CommandMap map = (CommandMap) ReflectionUtil.getField(Bukkit.getServer().getClass(), "commandMap").get(Bukkit.getServer());
-            ReflectionUtil.unregisterCommands(map, Command.getRegisteredCommands());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        for (User user : users) {
-            user.unload();
-        }
-        users.clear();
-        for (DisablingThread thread : threads) {
-            thread.disable();
-        }
+        if (instance != null) {
+            try {
+                CommandMap map = (CommandMap) ReflectionUtil.getField(Bukkit.getServer().getClass(), "commandMap").get(Bukkit.getServer());
+                ReflectionUtil.unregisterCommands(map, Command.getRegisteredCommands());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (User user : users) {
+                user.unload();
+            }
+            users.clear();
+            for (DisablingThread thread : threads) {
+                thread.disable();
+            }
 
-        if (expansion != null && expansion.isRegistered()) {
-            expansion.unregister();
+            if (expansion != null && expansion.isRegistered()) {
+                expansion.unregister();
+            }
         }
     }
 
@@ -206,7 +210,6 @@ public class Core extends JavaPlugin {
                     System.out.println("Download successful: " + lib);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

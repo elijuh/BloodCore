@@ -7,14 +7,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.bloodcore.Core;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
@@ -34,6 +37,18 @@ public class HTTPUtil {
 
     public interface GetTextureResponse {
         void handle(String texture, String signature);
+    }
+
+    public boolean validate(String license) {
+        if (license == null) {
+            return false;
+        }
+        try (InputStream in = new URL("http://104.128.53.75:25580/bloodcore/verify-license/" + license).openStream()) {
+            return Boolean.parseBoolean(IOUtils.toString(in, StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void getTextureAndSignature(String playerName, GetTextureResponse response) {
