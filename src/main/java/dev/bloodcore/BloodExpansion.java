@@ -42,9 +42,8 @@ public class BloodExpansion extends PlaceholderExpansion {
                     Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
                     return rank.getColor();
                 }
-                case "tag": {
+                case "tag":
                     return user.containsKey("tag") ? user.getString("tag") : "";
-                }
             }
         }
         return "";

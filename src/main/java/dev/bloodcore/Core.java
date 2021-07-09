@@ -21,6 +21,7 @@ import dev.bloodcore.ranks.RankManager;
 import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.HTTPUtil;
+import dev.bloodcore.utils.LibManager;
 import dev.bloodcore.utils.ReflectionUtil;
 import dev.bloodcore.world.WorldManager;
 import lombok.Getter;
@@ -67,6 +68,7 @@ public class Core extends JavaPlugin {
     }
 
     public void onEnable() {
+        new LibManager();
         Bukkit.getScheduler().runTaskAsynchronously(this, ()-> {
             loadClasses();
             Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
