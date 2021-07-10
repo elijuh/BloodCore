@@ -75,6 +75,9 @@ public class Core extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&cInvalid license! plugin disabling..."));
             Bukkit.getPluginManager().disablePlugin(this);
             return;
+        }else{
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aLicense is valid! Enabling core."));
+
         }
         instance = this;
 

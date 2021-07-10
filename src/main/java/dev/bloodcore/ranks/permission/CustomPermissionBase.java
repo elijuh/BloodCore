@@ -3,6 +3,7 @@ package dev.bloodcore.ranks.permission;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ReflectionUtil;
 import lombok.Getter;
+import me.clip.placeholderapi.commands.impl.local.CommandExpansionUnregister;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
@@ -40,4 +41,5 @@ public class CustomPermissionBase extends PermissibleBase {
         Permission perm = Bukkit.getPluginManager().getPermission(name);
         return perm != null ? perm.getDefault().getValue(super.isOp()) : Permission.DEFAULT_PERMISSION.getValue(super.isOp());
     }
+
 }

@@ -5,6 +5,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import dev.bloodcore.Core;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
@@ -13,11 +16,11 @@ import org.bukkit.Bukkit;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
@@ -43,11 +46,23 @@ public class HTTPUtil {
         if (license == null) {
             return false;
         }
-        try (InputStream in = new URL("http://104.128.53.75:25580/bloodcore/verify-license/" + license).openStream()) {
-            return Boolean.parseBoolean(IOUtils.toString(in, StandardCharsets.UTF_8));
+        OkHttpClient client = new OkHttpClient();
+
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&eValidating the license..."));
+        try {
+            Request request = new Request.Builder()
+                    .url("http://104.128.53.75:25580/bloodcore/verify-license/" + license)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            String value = response.body().string();
+            if(value.equalsIgnoreCase("true")){
+                return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
@@ -89,25 +104,25 @@ public class HTTPUtil {
     }
 
     public void getTextureAndSignatureFromUUID(String uuidString, GetTextureResponse response) {
-            String texture, signature;
+        String texture, signature;
 
-            try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.mineskin.org/generate/user/" + uuidString).openConnection();
-                if (connection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
-                    String reply = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
+        try {
+            HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.mineskin.org/generate/user/" + uuidString).openConnection();
+            if (connection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
+                String reply = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
 
-                    texture = reply.split("\"value\":\"")[1].split("\"")[0];
-                    signature = reply.split("\"signature\":\"")[1].split("\"")[0];
-                } else {
-                    texture = null;
-                    signature = null;
-                }
-            }catch (Exception ignored){
+                texture = reply.split("\"value\":\"")[1].split("\"")[0];
+                signature = reply.split("\"signature\":\"")[1].split("\"")[0];
+            } else {
                 texture = null;
                 signature = null;
             }
+        } catch (Exception ignored) {
+            texture = null;
+            signature = null;
+        }
 
-            response.handle(texture, signature);
+        response.handle(texture, signature);
 
     }
 
