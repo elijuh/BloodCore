@@ -67,6 +67,9 @@ public class Disguise {
         });
     }
 
+    public String getName(){
+        return this.name;
+    }
     public void remove() {
         apply(originalName, originalTexture, originalSignature);
     }

@@ -14,6 +14,7 @@ import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.etc.YamlStorage;
 import dev.bloodcore.listeners.BukkitListener;
+import dev.bloodcore.listeners.ChatListener;
 import dev.bloodcore.listeners.PunishmentListener;
 import dev.bloodcore.listeners.WorldListener;
 import dev.bloodcore.punishments.PunishmentManager;
@@ -119,7 +120,7 @@ public class Core extends JavaPlugin {
             new GamemodeCommand();
             new RulesCommand();
             new MessageCommand();
-
+            new SudoCommand();
             new BanCommand();
             new UnbanCommand();
             new TempbanCommand();
@@ -134,6 +135,8 @@ public class Core extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
             Bukkit.getPluginManager().registerEvents(new WorldListener(), this);
+            Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
+
 
 
             for (Player p : Bukkit.getOnlinePlayers()) {

@@ -8,15 +8,18 @@ import java.util.List;
 
 @Getter
 public enum Config {
+    LICENSE("license", "LicenseGoesHere"),
+
     MONGO_CONNECTION("mongo-db.connection-string", ""),
     SERVER_NAME("server-name", "Hub"),
     GLOBAL_CHAT_TIMER("chat.timer", 0),
     GLOBAL_CHAT_FORMAT("chat.format", "%rank_prefix%%player% &8» &r%message%"),
+    GLOBAL_CHAT_COOLDOWN_MESSAGE("chat.cooldown", "&cYou are on cooldown for &e%delay% &cmore seconds!"),
     MESSAGE_SOUND_ENABLED("messages.sound.enabled", true),
     MESSAGE_SOUND_ENUM("messages.sound.value", "ORB_PICKUP"),
     MESSAGE_SOUND_VOLUME("messages.sound.volume", 1f),
     MESSAGE_SOUND_PITCH("messages.sound.pitch", 1f),
-    RULES("rules", Lists.newArrayList("#1", "#2"));
+    RULES("rules", Lists.newArrayList("line 1", "line 2"));
 
     private final String path;
     private final Object def;

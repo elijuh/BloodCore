@@ -44,7 +44,11 @@ public enum Messages {
     WARN_MESSAGE("staff.warn-message", "%silent%%target% &awas warned by &r%executor%&a."),
     BAN_SCREEN("staff.ban-screen", "&cYour account is currently %bantype% from ExampleServer\n&cYou were banned for: &7%reason%\n&cExpires in: &7%duration%\n \n&6You can appeal at %appeal%"),
     KICK_SCREEN("staff.kick-screen", "&cYou have been kicked from ExampleServer\n&cYou were kicked for: &7%reason%"),
-    APPEAL("staff.appeal-link", "example.net/appeal");
+    APPEAL("staff.appeal-link", "example.net/appeal"),
+    SUDO_YOURSELF("commands.sudo.self", "&cYou can't /sudo yourself!"),
+    SUDO_OTHER("commands.sudo.other", "&aYou made %target_prefix%%target% &aexecute &r\"%command%\""),
+    SUDO_STAFF("commands.sudo.staffmessage", "&c&l[SUDO] %sender_prefix%%sender% &7made %target_prefix%%target% &7execute &r\"%command%\"");
+
     private static final YamlStorage messages = Core.i().getMessages();
     private final String path;
     private final String def;

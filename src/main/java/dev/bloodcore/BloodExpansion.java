@@ -1,5 +1,6 @@
 package dev.bloodcore;
 
+import dev.bloodcore.etc.Disguise;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.ranks.Rank;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -63,6 +64,9 @@ public class BloodExpansion extends PlaceholderExpansion {
                 case "vanish":
                 case "vanished": {
                     return user.isHidden() ? "&aEnabled" : "&cDisabled";
+                }
+                case "name": {
+                    return !user.getData().containsKey("disguise") ? user.name() : ((Disguise) user.getData().get("disguise")).getName();
                 }
                 default: {
                     return this.onRequest(player, params);

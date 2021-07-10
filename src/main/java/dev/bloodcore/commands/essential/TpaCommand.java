@@ -40,12 +40,12 @@ public class TpaCommand extends Command {
                         return;
                     }
 
-                    if (!user.getData().containsKey("tparequesting")) {
+                    if (!user.getData().containsKey("tpa_request")) {
                         user.msg("&7You have nobody to accept");
                         return;
                     }
 
-                    User requesting = user.get("tparequesting");
+                    User requesting = user.get("tpa_request");
                     if (requesting == null) {
                         user.msg("&7That player is no longer online.");
                         return;
@@ -90,8 +90,8 @@ public class TpaCommand extends Command {
                 message.append(" ").append(args[i]);
             }
 
-            user.getData().put("tparequesting", target);
-            target.getData().put("messaging", user);
+            user.getData().put("tpa_request", target);
+          //  target.getData().put("messaging", user);
 
             user.getPlayer().sendMessage(ChatUtil.color(Messages.MSG_TO.getString()
                     .replace("%rank_color%", target.getRank().getColor())
@@ -101,16 +101,10 @@ public class TpaCommand extends Command {
                     .replace("%rank_color%", user.getRank().getColor())
                     .replace("%name%", user.name())
             ) + message);
-            Sound sound;
-            try {
-                sound = Sound.valueOf(Config.MESSAGE_SOUND_ENUM.getString());
-            } catch (IllegalArgumentException e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Message Sound has invalid sound value in config!");
-                return;
-            }
-            if (messaging.getSettings().getBoolean("messageSounds")) {
-                messaging.sound(sound, Config.MESSAGE_SOUND_VOLUME.getFloat(), Config.MESSAGE_SOUND_PITCH.getFloat());
-            }
+
+          // if (messaging.getSettings().getBoolean("messageSounds")) {
+          //     messaging.sound(sound, Config.MESSAGE_SOUND_VOLUME.getFloat(), Config.MESSAGE_SOUND_PITCH.getFloat());
+          // }
         } else {
             user.msg("&cUsage: /msg <player> <message..>");
         }

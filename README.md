@@ -4,8 +4,11 @@
 - World management commands/gui (✅)
 - Basic essentials commands (✅)
 - Punishment stuff (✅)
-- chat manager
-- all the staff things
+- chat manager (✅)
+- all the staff things (chat)
 - messaging (✅)
 - placeholder expansion (✅)
+- sudo (❌)
+- tags? (❌)
+
 # sheesh

@@ -38,18 +38,4 @@ public class BukkitListener implements Listener {
             Core.i().getUsers().remove(user);
         }
     }
-
-    @EventHandler
-    public void on(AsyncPlayerChatEvent e) {
-        User user = Core.i().getUser(e.getPlayer());
-        if (user == null) {
-            e.setCancelled(true);
-        } else {
-            e.setFormat(ChatUtil.color(Config.GLOBAL_CHAT_FORMAT.getString()
-                    .replace("%rank_prefix%", user.getRank().getPrefix())
-                    .replace("%player%", "%1$s")
-                    .replace("%message%", "%2$s")
-            ));
-        }
-    }
 }
