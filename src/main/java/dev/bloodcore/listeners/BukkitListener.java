@@ -2,6 +2,8 @@ package dev.bloodcore.listeners;
 
 import dev.bloodcore.Core;
 import dev.bloodcore.etc.User;
+import dev.bloodcore.etc.YamlStorage;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,6 +21,15 @@ public class BukkitListener implements Listener {
         }
         Core.i().getUsers().add(user);
         Core.i().getMongoManager().updateUser(user);
+
+        YamlStorage worldConfig = Core.i().getWorldConfig();
+        for (String key : worldConfig.getKeys(false)) {
+            if (worldConfig.get(key + ".spawn") != null) {
+                Location loc = (Location) worldConfig.get(key + ".spawn");
+                e.getPlayer().teleport(loc);
+                return;
+            }
+        }
     }
 
     @EventHandler

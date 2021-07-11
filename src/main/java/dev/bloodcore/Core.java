@@ -141,6 +141,7 @@ public class Core extends JavaPlugin {
             new VanishCommand();
             new TpaCommand();
 
+            new SetSpawnCommand();
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
             Bukkit.getPluginManager().registerEvents(new WorldListener(), this);
