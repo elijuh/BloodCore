@@ -38,5 +38,6 @@ public class SetSpawnCommand extends Command {
         String worldName = ((Player)sender).getWorld().getName();
         worldConfig.set(worldName + ".spawn", ((Player) sender).getLocation());
         sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX + " &eYou've set the server's spawn location!"));
+        worldConfig.save();
     }
 }

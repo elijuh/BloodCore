@@ -1,6 +1,7 @@
 package dev.bloodcore.listeners;
 
 import dev.bloodcore.Core;
+import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.etc.YamlStorage;
 import org.bukkit.Location;
@@ -22,12 +23,15 @@ public class BukkitListener implements Listener {
         Core.i().getUsers().add(user);
         Core.i().getMongoManager().updateUser(user);
 
-        YamlStorage worldConfig = Core.i().getWorldConfig();
-        for (String key : worldConfig.getKeys(false)) {
-            if (worldConfig.get(key + ".spawn") != null) {
-                Location loc = (Location) worldConfig.get(key + ".spawn");
-                e.getPlayer().teleport(loc);
-                return;
+        if (Config.SPAWN_ON_JOIN.getBoolean()) {
+            YamlStorage worldConfig = Core.i().getWorldConfig();
+            for (String key : worldConfig.getKeys(false)) {
+                if (worldConfig.get(key + ".spawn") != null) {
+
+                    Location loc = (Location) worldConfig.get(key + ".spawn");
+                    e.getPlayer().teleport(loc);
+                    return;
+                }
             }
         }
     }

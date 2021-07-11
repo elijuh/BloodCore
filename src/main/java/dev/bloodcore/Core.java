@@ -140,6 +140,8 @@ public class Core extends JavaPlugin {
             new StaffModeCommand();
             new VanishCommand();
             new TpaCommand();
+            new SpawnCommand();
+            new InvSeeCommand();
 
             new SetSpawnCommand();
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);

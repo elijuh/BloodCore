@@ -18,7 +18,8 @@ public enum Config {
     MESSAGE_SOUND_ENUM("messages.sound.value", "ORB_PICKUP"),
     MESSAGE_SOUND_VOLUME("messages.sound.volume", 1f),
     MESSAGE_SOUND_PITCH("messages.sound.pitch", 1f),
-    RULES("rules", Lists.newArrayList("line 1", "line 2"));
+    RULES("rules", Lists.newArrayList("line 1", "line 2")),
+    SPAWN_ON_JOIN("spawn_on_join", true);
 
     private final String path;
     private final Object def;
@@ -44,7 +45,10 @@ public enum Config {
         return Core.i().getConfig().getString(path);
     }
 
-
+    public boolean getBoolean(){
+        return Core.i().getConfig().getBoolean(path);
+   //     return true;
+    }
     @Override
     public String toString() {
         return getString();
