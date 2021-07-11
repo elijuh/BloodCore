@@ -38,7 +38,7 @@ public class ListCommand extends Command {
             }
         }
         List<User> users = Core.i().getUsers().stream()
-                .filter(user -> !user.isHidden())
+                .filter(user -> !user.isVanished())
                 .sorted(Comparator.comparingInt(user -> user.getRank().getPriority()))
                 .collect(Collectors.toList());
 

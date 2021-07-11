@@ -59,11 +59,11 @@ public class BloodExpansion extends PlaceholderExpansion {
                 case "staff":
                 case "modmode":
                 case "staffmode": {
-                    return (user.getData().containsKey("staffmode") && (boolean) user.get("staffmode")) ? "&aEnabled" : "&cDisabled";
+                    return user.isStaffMode() ? "&aEnabled" : "&cDisabled";
                 }
                 case "vanish":
                 case "vanished": {
-                    return user.isHidden() ? "&aEnabled" : "&cDisabled";
+                    return user.isVanished() ? "&aEnabled" : "&cDisabled";
                 }
                 case "name": {
                     return !user.getData().containsKey("disguise") ? user.name() : ((Disguise) user.getData().get("disguise")).getName();

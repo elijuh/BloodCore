@@ -23,6 +23,8 @@ public class User {
     private final Document settings;
     private final Player player;
     private Rank rank;
+    private String tag;
+    private boolean vanished, staffMode;
 
     public User(Player player) {
         this.player = player;
@@ -53,6 +55,14 @@ public class User {
         settings = data.get("settings", Document.class);
 
         ReflectionUtil.setPermissibleBase(player, new CustomPermissionBase(this));
+
+        if (player.hasPermission("blood.command.staffmode") && Core.i().getStaffManager().getStaffConfig().getBoolean("staffmode.enable-on-join")) {
+            Core.i().getStaffManager().enterStaffMode(this);
+        }
+
+        if (player.hasPermission("blood.command.vanish") && Core.i().getStaffManager().getStaffConfig().getBoolean("vanish.enable-on-join")) {
+            Core.i().getStaffManager().vanish(this);
+        }
     }
 
     public void unload() {
@@ -65,6 +75,10 @@ public class User {
         Disguise disguise = get("disguise");
         if (disguise != null) {
             disguise.remove();
+        }
+
+        if (staffMode) {
+            Core.i().getStaffManager().leaveStaffMode(this);
         }
 
         Document update = new Document("settings", settings);
@@ -130,9 +144,5 @@ public class User {
             }
         }
         setRank(Core.i().getRankManager().getRank(data.getString("rank"), true));
-    }
-
-    public boolean isHidden() {
-        return data.containsKey("vanished") && (boolean) data.get("vanished");
     }
 }

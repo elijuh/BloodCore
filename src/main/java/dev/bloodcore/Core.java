@@ -6,6 +6,8 @@ import dev.bloodcore.commands.essential.*;
 import dev.bloodcore.commands.main.BloodCommand;
 import dev.bloodcore.commands.punishments.*;
 import dev.bloodcore.commands.rank.RankCommand;
+import dev.bloodcore.commands.staff.StaffModeCommand;
+import dev.bloodcore.commands.staff.VanishCommand;
 import dev.bloodcore.commands.user.UserCommand;
 import dev.bloodcore.commands.world.WorldCommand;
 import dev.bloodcore.db.MongoManager;
@@ -19,6 +21,8 @@ import dev.bloodcore.listeners.PunishmentListener;
 import dev.bloodcore.listeners.WorldListener;
 import dev.bloodcore.punishments.PunishmentManager;
 import dev.bloodcore.ranks.RankManager;
+import dev.bloodcore.staff.StaffListener;
+import dev.bloodcore.staff.StaffManager;
 import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.HTTPUtil;
@@ -61,6 +65,7 @@ public class Core extends JavaPlugin {
     private ChatManager chatManager;
     private RankManager rankManager;
     private PunishmentManager punishmentManager;
+    private StaffManager staffManager;
 
     private HTTPUtil httpUtility;
 
@@ -106,6 +111,7 @@ public class Core extends JavaPlugin {
             chatManager = new ChatManager();
             rankManager = new RankManager();
             punishmentManager = new PunishmentManager();
+            staffManager = new StaffManager();
 
             new BloodCommand();
             new RankCommand();
@@ -131,11 +137,15 @@ public class Core extends JavaPlugin {
             new IPUnbanCommand();
             new KickCommand();
             new WarnCommand();
+            new StaffModeCommand();
+            new VanishCommand();
+            new TpaCommand();
 
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
             Bukkit.getPluginManager().registerEvents(new WorldListener(), this);
             Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
+            Bukkit.getPluginManager().registerEvents(new StaffListener(), this);
 
 
 
@@ -257,6 +267,7 @@ public class Core extends JavaPlugin {
         messages.save();
         worldConfig.reload();
         chatManager.reload();
+        staffManager.reload();
     }
 
     public Document getDefaultSettings() {

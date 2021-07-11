@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 
 public class FeedCommand extends Command {
     public FeedCommand() {
-        super("feed", ImmutableList.of("food"), "blood.command.feed");
+        super("feed", ImmutableList.of("food", "eat"), "blood.command.feed");
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender) : PlayerUtil.getAllPlayers();
+            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender, args[0]) : PlayerUtil.getAllPlayers(args[0]);
         }
         return null;
     }

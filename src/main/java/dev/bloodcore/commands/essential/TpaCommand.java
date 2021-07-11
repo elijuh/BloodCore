@@ -3,19 +3,15 @@ package dev.bloodcore.commands.essential;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.PlayerUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.logging.Level;
 
 public class TpaCommand extends Command {
     public TpaCommand() {
@@ -62,7 +58,7 @@ public class TpaCommand extends Command {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender) : PlayerUtil.getAllPlayers();
+            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender, args[0]) : PlayerUtil.getAllPlayers(args[0]);
         }
         return null;
     }

@@ -4,6 +4,7 @@ import dev.bloodcore.Core;
 import dev.bloodcore.etc.User;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -29,20 +30,22 @@ public class PlayerUtil {
         return 0;
     }
 
-    public List<String> getVisiblePlayers(Player p) {
+    public List<String> getVisiblePlayers(Player p, String prefix) {
         List<String> players = new ArrayList<>();
         for (User user : Core.i().getUsers()) {
-            if (p.canSee(user.getPlayer())) {
+            if (p.canSee(user.getPlayer()) && StringUtil.startsWithIgnoreCase(user.name(), prefix)) {
                 players.add(user.name());
             }
         }
         return players;
     }
 
-    public List<String> getAllPlayers() {
+    public List<String> getAllPlayers(String prefix) {
         List<String> players = new ArrayList<>();
         for (User user : Core.i().getUsers()) {
-            players.add(user.name());
+            if (StringUtil.startsWithIgnoreCase(user.name(), prefix)) {
+                players.add(user.name());
+            }
         }
         return players;
     }

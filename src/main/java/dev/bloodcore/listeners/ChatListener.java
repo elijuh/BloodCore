@@ -9,12 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.text.DecimalFormat;
-import java.util.HashMap;
-
 public class ChatListener implements Listener {
-    private final HashMap<Player, Long> cooldowns = new HashMap<>();
-    private final DecimalFormat df = new DecimalFormat("#.#");
 
     @EventHandler
     public void on(AsyncPlayerChatEvent e) {
@@ -23,9 +18,10 @@ public class ChatListener implements Listener {
         if (user == null) {
             e.setCancelled(true);
         } else {
-            long remainingTime = (Config.GLOBAL_CHAT_TIMER.getInt() * 1000L) - (System.currentTimeMillis() - cooldowns.getOrDefault(p, 0L));
+            long remainingTime = (Config.GLOBAL_CHAT_TIMER.getInt() * 1000L) - (System.currentTimeMillis() - (long) user.getData().getOrDefault("lastChat", 0L));
             if (remainingTime > 0) {
-                p.sendMessage(ChatUtil.color(Config.GLOBAL_CHAT_COOLDOWN_MESSAGE.getString().replace("%delay%", "" + df.format((double) remainingTime / 1000D))));
+                p.sendMessage(ChatUtil.color(Config.GLOBAL_CHAT_COOLDOWN_MESSAGE.getString()
+                        .replace("%delay%", Double.toString(Math.round(remainingTime / 100.0) / 10.0))));
                 e.setCancelled(true);
                 return;
             }
@@ -34,7 +30,7 @@ public class ChatListener implements Listener {
                     .replace("%player%", "%1$s")
                     .replace("%message%", "%2$s")
             ));
-            cooldowns.put(p, System.currentTimeMillis());
+            user.getData().put("lastChat", System.currentTimeMillis());
         }
     }
 }

@@ -9,7 +9,6 @@ import java.util.List;
 @Getter
 public enum Config {
     LICENSE("license", "LicenseGoesHere"),
-
     MONGO_CONNECTION("mongo-db.connection-string", ""),
     SERVER_NAME("server-name", "Hub"),
     GLOBAL_CHAT_TIMER("chat.timer", 0),

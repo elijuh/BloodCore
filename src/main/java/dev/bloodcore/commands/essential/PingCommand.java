@@ -21,7 +21,7 @@ public class PingCommand extends Command {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender) : PlayerUtil.getAllPlayers();
+            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender, args[0]) : PlayerUtil.getAllPlayers(args[0]);
         }
         return null;
     }
@@ -32,7 +32,7 @@ public class PingCommand extends Command {
         if (sender instanceof ConsoleCommandSender && args.length == 0) {
             sender.sendMessage(ChatUtil.color("&cPlease provide a player."));
             return;
-        } else if (target == null || target.isHidden()) {
+        } else if (target == null || target.isVanished()) {
             sender.sendMessage(ChatUtil.color("&cThat player is not online."));
             return;
         }

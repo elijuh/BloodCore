@@ -21,7 +21,7 @@ public class HealCommand extends Command {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender) : PlayerUtil.getAllPlayers();
+            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender, args[0]) : PlayerUtil.getAllPlayers(args[0]);
         }
         return ImmutableList.of();
     }
@@ -38,6 +38,8 @@ public class HealCommand extends Command {
         }
 
         target.getPlayer().setHealth(target.getPlayer().getMaxHealth());
+        target.getPlayer().setFoodLevel(40);
+        target.getPlayer().setSaturation(40);
 
         if (target.getPlayer() != sender) {
             sender.sendMessage(ChatUtil.color(Messages.HEAL_OTHER.getString()

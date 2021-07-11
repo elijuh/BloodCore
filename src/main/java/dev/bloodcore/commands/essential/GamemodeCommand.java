@@ -53,7 +53,7 @@ public class GamemodeCommand extends Command {
             }
             return completion;
         } else if (args.length == 2) {
-            return sender instanceof Player ? PlayerUtil.getVisiblePlayers(((Player) sender)) : PlayerUtil.getAllPlayers();
+            return sender instanceof Player ? PlayerUtil.getVisiblePlayers(((Player) sender), args[1]) : PlayerUtil.getAllPlayers(args[1]);
         }
 
         return ImmutableList.of();

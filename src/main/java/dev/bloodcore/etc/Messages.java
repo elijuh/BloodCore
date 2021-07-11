@@ -45,6 +45,8 @@ public enum Messages {
     BAN_SCREEN("staff.ban-screen", "&cYour account is currently %bantype% from ExampleServer\n&cYou were banned for: &7%reason%\n&cExpires in: &7%duration%\n \n&6You can appeal at %appeal%"),
     KICK_SCREEN("staff.kick-screen", "&cYou have been kicked from ExampleServer\n&cYou were kicked for: &7%reason%"),
     APPEAL("staff.appeal-link", "example.net/appeal"),
+    STAFFMODE("staff.staffmode", "&eYour &6Staff Mode&e has been %state%&e."),
+    VANISH("staff.vanish", "&eYour &6Vanish&e has been %state%&e."),
     SUDO_YOURSELF("commands.sudo.self", "&cYou can't /sudo yourself!"),
     SUDO_OTHER("commands.sudo.other", "&aYou made %target_prefix%%target% &aexecute &r\"%command%\""),
     SUDO_STAFF("commands.sudo.staffmessage", "&c&l[SUDO] %sender_prefix%%sender% &7made %target_prefix%%target% &7execute &r\"%command%\"");

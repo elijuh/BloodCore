@@ -24,7 +24,7 @@ public class RankSetCommand extends SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
-            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender) : PlayerUtil.getAllPlayers();
+            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender, args[1]) : PlayerUtil.getAllPlayers(args[1]);
         } else if (args.length == 3) {
             List<String> completion = new ArrayList<>();
             for (Rank rank : Core.i().getRankManager().getRanks()) {

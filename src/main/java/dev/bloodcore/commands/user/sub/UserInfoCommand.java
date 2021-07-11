@@ -24,7 +24,7 @@ public class UserInfoCommand extends SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
-            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender) : PlayerUtil.getAllPlayers();
+            return sender instanceof Player ? PlayerUtil.getVisiblePlayers((Player) sender, args[1]) : PlayerUtil.getAllPlayers(args[1]);
         }
         return null;
     }
