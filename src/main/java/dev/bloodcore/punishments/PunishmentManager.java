@@ -1,6 +1,6 @@
 package dev.bloodcore.punishments;
 
-import com.mongodb.client.MongoCursor;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Filters;
 import dev.bloodcore.Core;
 import dev.bloodcore.db.MongoManager;
@@ -44,12 +44,12 @@ public class PunishmentManager {
         manager.getPunishmentsCollection().updateMany(filter, new Document("$set", update));
     }
 
-    public MongoCursor<Document> getPunishments(String uuid, PType type) {
-        return manager.getPunishmentsCollection().find(new Document("uuid", uuid).append("type", type.name())).iterator();
+    public FindIterable<Document> getPunishments(String uuid, PType type) {
+        return manager.getPunishmentsCollection().find(new Document("uuid", uuid).append("type", type.name()));
     }
 
-    public MongoCursor<Document> getAccounts(String ip) {
-        return manager.getUsersCollection().find(new Document("ip", ip)).iterator();
+    public FindIterable<Document> getAccounts(String ip) {
+        return manager.getUsersCollection().find(new Document("ip", ip));
     }
 
     public void deletePunishment(int id) {
