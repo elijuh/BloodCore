@@ -6,11 +6,13 @@ import dev.bloodcore.Core;
 import dev.bloodcore.db.MongoManager;
 import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.thread.listeners.PunishmentListenerThread;
+import lombok.Getter;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 public class PunishmentManager {
     private final MongoManager manager = Core.i().getMongoManager();
+    @Getter private final HistoryGUI historyGUI = new HistoryGUI();
 
     public PunishmentManager() {
         DisablingThread t = new PunishmentListenerThread();

@@ -3,10 +3,11 @@ package dev.bloodcore.commands.essential;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.etc.YamlStorage;
 import dev.bloodcore.utils.ChatUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -23,20 +24,22 @@ public class SpawnCommand extends Command {
 
     @Override
     public void onExecute(CommandSender sender, String[] args) {
-        Location spawn = null;
-        YamlStorage worldConfig = Core.i().getWorldConfig();
-        for (String key : worldConfig.getKeys(false)) {
-            if (worldConfig.get(key + ".spawn") != null) {
-                spawn = (Location) worldConfig.get(key + ".spawn");
-                break;
-            }
+        if (sender instanceof ConsoleCommandSender) {
+            sender.sendMessage(ChatUtil.color("&cPlayer-only command."));
+        } else if (!Core.i().getConfig().contains("spawn")) {
+            sender.sendMessage(ChatUtil.color("&cSpawn has not been set yet!"));
+        } else {
+            String[] info = Core.i().getConfig().getString("spawn").split(";");
+            Location spawn = new Location(
+                    Bukkit.getWorld(info[0]),
+                    Double.parseDouble(info[1]),
+                    Double.parseDouble(info[2]),
+                    Double.parseDouble(info[3]),
+                    Float.parseFloat(info[4]),
+                    Float.parseFloat(info[5])
+            );
+            ((Player) sender).teleport(spawn);
+            sender.sendMessage(ChatUtil.color("&aYou have teleported to spawn."));
         }
-        if (spawn == null) {
-            sender.sendMessage(ChatUtil.color("&cSpawn hasn't been configured yet."));
-            return;
-        }
-        ((Player)sender).teleport(spawn);
-        sender.sendMessage(ChatUtil.color("&aYou've been teleported to spawn!"));
-
     }
 }

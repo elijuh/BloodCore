@@ -1,5 +1,7 @@
 package dev.bloodcore;
 
+import com.sk89q.wepif.PermissionsProvider;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.commands.essential.*;
@@ -32,6 +34,7 @@ import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,7 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Getter
-public class Core extends JavaPlugin {
+public class Core extends JavaPlugin implements PermissionsProvider {
     private final DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy h:mm aa");
     private final Set<User> users = new HashSet<>();
     private final Set<DisablingThread> threads = new HashSet<>();
@@ -142,6 +145,7 @@ public class Core extends JavaPlugin {
             new TpaCommand();
             new SpawnCommand();
             new InvSeeCommand();
+            new TpCommand();
 
             new SetSpawnCommand();
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
@@ -150,7 +154,9 @@ public class Core extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
             Bukkit.getPluginManager().registerEvents(new StaffListener(), this);
 
-
+            if (getWorldEdit() != null) {
+                getWorldEdit().getPermissionsResolver().setPluginPermissionsResolver(this);
+            }
 
             for (Player p : Bukkit.getOnlinePlayers()) {
                 users.add(new User(p));
@@ -178,6 +184,15 @@ public class Core extends JavaPlugin {
                 expansion.unregister();
             }
         }
+    }
+
+    public WorldEditPlugin getWorldEdit() {
+        try {
+            Class.forName("com.sk89q.worldedit.bukkit.WorldEditPlugin");
+        } catch (Exception e) {
+            return null;
+        }
+        return (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
     }
 
     public User getUser(Player player) {
@@ -276,5 +291,49 @@ public class Core extends JavaPlugin {
     public Document getDefaultSettings() {
         return new Document("messageSounds", true)
                 .append("messageToggle", true);
+    }
+
+    @Override
+    public boolean hasPermission(String name, String permission) {
+        Player p = Bukkit.getPlayerExact(name);
+        if (p != null) {
+            return p.hasPermission(permission);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasPermission(String s, String name, String permission) {
+        return hasPermission(name, permission);
+    }
+
+    @Override
+    public boolean inGroup(String s, String s1) {
+        return false;
+    }
+
+    @Override
+    public String[] getGroups(String s) {
+        return new String[0];
+    }
+
+    @Override
+    public boolean hasPermission(OfflinePlayer offlinePlayer, String permission) {
+        return hasPermission(offlinePlayer.getName(), permission);
+    }
+
+    @Override
+    public boolean hasPermission(String s, OfflinePlayer offlinePlayer, String permission) {
+        return hasPermission(offlinePlayer.getName(), permission);
+    }
+
+    @Override
+    public boolean inGroup(OfflinePlayer offlinePlayer, String s) {
+        return false;
+    }
+
+    @Override
+    public String[] getGroups(OfflinePlayer offlinePlayer) {
+        return new String[0];
     }
 }

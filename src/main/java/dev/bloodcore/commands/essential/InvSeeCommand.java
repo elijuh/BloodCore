@@ -4,10 +4,9 @@ import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.etc.User;
-import dev.bloodcore.etc.YamlStorage;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.PlayerUtil;
-import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -33,16 +32,25 @@ public class InvSeeCommand extends Command {
             return;
         }
         User user = Core.i().getUser(sender.getName());
-        if (user == null || user.getPlayer() == null) {
+        if (user == null) {
             sender.sendMessage(ChatUtil.color("&cYour profile is not loaded, please relog."));
-        }
-        User target = Core.i().getUser(args[0]);
-        if (target == null || target.getPlayer() == null) {
-            user.msg("&cThat player is not online.");
+            //bruh you forgot to return what an idiot lmao
             return;
         }
-        user.getPlayer().openInventory(target.getPlayer().getInventory());
+        //also forget to length check args like a monkey
+        if (args.length > 0) {
+            User target = Core.i().getUser(args[0]);
+            if (target == null) {
+                user.msg("&cThat player is not online.");
+                return;
+            }
 
-
+            user.getData().put("invseeing", true);
+            user.getPlayer().openInventory(target.getPlayer().getInventory());
+            user.sound(Sound.CLICK, 0.5f, 1f);
+            user.msg("&eOpening inventory of " + target.getRank().getColor() + target.name() + "&e.");
+        } else {
+            sender.sendMessage(ChatUtil.color("&cUsage: /invsee <player>"));
+        }
     }
 }

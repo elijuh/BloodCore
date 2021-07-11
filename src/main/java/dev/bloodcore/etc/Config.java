@@ -19,7 +19,9 @@ public enum Config {
     MESSAGE_SOUND_VOLUME("messages.sound.volume", 1f),
     MESSAGE_SOUND_PITCH("messages.sound.pitch", 1f),
     RULES("rules", Lists.newArrayList("line 1", "line 2")),
-    SPAWN_ON_JOIN("spawn_on_join", true);
+    SPAWN_ON_JOIN("spawn_on_join", true),
+    JOIN_MESSAGE("join-message", "%prefix%%player% &ahas joined the server."),
+    QUIT_MESSAGE("quit-message", "%prefix%%player% &chas left the server.");
 
     private final String path;
     private final Object def;

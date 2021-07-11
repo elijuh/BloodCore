@@ -3,7 +3,6 @@ package dev.bloodcore.commands.essential;
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
 import dev.bloodcore.utils.PlayerUtil;
@@ -29,7 +28,7 @@ public class TpaCommand extends Command {
                     sender.sendMessage(ChatUtil.color("&cOnly players can tpa."));
                     return;
                 }
-                if (args.length > 0) {
+                if (args.length == 0) {
                     User user = Core.i().getUser(sender.getName());
                     if (user == null) {
                         sender.sendMessage(ChatUtil.color("&cYour profile is not loaded, please relog."));
@@ -47,9 +46,12 @@ public class TpaCommand extends Command {
                         return;
                     }
 
-                    user.getPlayer().teleport(requesting.getPlayer().getLocation());
+                    user.getData().remove("tpa_request");
+                    requesting.getPlayer().teleport(user.getPlayer());
+                    requesting.msg(user.getRank().getColor() + user.name() + " &ehas accepted your teleport request&e!");
+                    user.msg("&eYou have been teleported to " + requesting.getRank().getColor() + requesting.name() + "&e!");
                 } else {
-                    sender.sendMessage(ChatUtil.color("&c/tpa <player>"));
+                    sender.sendMessage(ChatUtil.color("&cUsage: /tpaccept"));
                 }
             }
         };
@@ -73,36 +75,22 @@ public class TpaCommand extends Command {
         User user = Core.i().getUser(sender.getName());
         if (user == null) {
             sender.sendMessage(ChatUtil.color("&cYour profile is not loaded, please relog."));
-        } else if (args.length > 1) {
+        } else if (args.length > 0) {
             User target = Core.i().getUser(args[0]);
             if (target == null) {
                 user.msg("&cThat player is not online.");
                 return;
+            } else if (target.getIgnoreList().contains(user.uuid())) {
+                user.msg("&cThat player has you ignored.");
+                return;
             }
 
-
-            StringBuilder message = new StringBuilder(args[1]);
-            for (int i = 2; i < args.length; i++) {
-                message.append(" ").append(args[i]);
-            }
-
-            user.getData().put("tpa_request", target);
-          //  target.getData().put("messaging", user);
-
-            user.getPlayer().sendMessage(ChatUtil.color(Messages.MSG_TO.getString()
-                    .replace("%rank_color%", target.getRank().getColor())
-                    .replace("%name%", target.name())
-            ) + message);
-            target.getPlayer().sendMessage(ChatUtil.color(Messages.MSG_FROM.getString()
-                    .replace("%rank_color%", user.getRank().getColor())
-                    .replace("%name%", user.name())
-            ) + message);
-
-          // if (messaging.getSettings().getBoolean("messageSounds")) {
-          //     messaging.sound(sound, Config.MESSAGE_SOUND_VOLUME.getFloat(), Config.MESSAGE_SOUND_PITCH.getFloat());
-          // }
+            target.getData().put("tpa_request", user);
+            user.msg("&eYou have sent a tpa request to " + target.getRank().getColor() + target.name() + "&e!");
+            target.msg("&eYou have received a tpa request from " + user.getRank().getColor() + user.name() + "&e!");
+            target.msg("&eType &a/tpaccept &eto accept.");
         } else {
-            user.msg("&cUsage: /msg <player> <message..>");
+            user.msg("&cUsage: /tpa <player>");
         }
     }
 }

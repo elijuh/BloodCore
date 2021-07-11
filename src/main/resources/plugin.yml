@@ -2,6 +2,7 @@ name: BloodCore
 version: ${project.version}
 softdepend:
   - PlaceholderAPI
+  - WorldEdit
 authors:
   - Hardstyles
   - elijuh

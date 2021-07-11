@@ -79,7 +79,7 @@ public class StaffManager {
                 .lore(staffConfig.getStringList("staffmode.freeze.lore")).build();
 
         carpetSlot = staffConfig.getInt("staffmode.carpet.slot");
-        carpet = ItemBuilder.create(Material.ICE).name(staffConfig.getString("staffmode.carpet.name"))
+        carpet = ItemBuilder.create(Material.CARPET).dura(staffConfig.getInt("staffmode.carpet.data")).name(staffConfig.getString("staffmode.carpet.name"))
                 .lore(staffConfig.getStringList("staffmode.carpet.lore")).build();
 
         staffOnlineSlot = staffConfig.getInt("staffmode.staff-online.slot");

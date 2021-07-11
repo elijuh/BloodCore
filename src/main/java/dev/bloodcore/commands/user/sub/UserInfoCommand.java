@@ -39,7 +39,7 @@ public class UserInfoCommand extends SubCommand {
             }
             Document data = user.get("data", Document.class);
             Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
-            String timezone = " &7(" + dateFormat.getTimeZone().getDisplayName(dateFormat.getTimeZone().useDaylightTime(), TimeZone.SHORT) + "&7)";
+            String timezone = " &7(" + dateFormat.getTimeZone().getDisplayName(dateFormat.getTimeZone().inDaylightTime(new Date()), TimeZone.SHORT) + "&7)";
             StringBuilder builder = new StringBuilder("&6&lUser Info &7» &f").append(user.getString("name"))
                     .append("\n&eID: &7&o").append(user.getString("uuid"))
                     .append("\n&eRank: &f").append(rank.getColor()).append(rank.getId())

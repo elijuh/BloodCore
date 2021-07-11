@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,6 +69,11 @@ public class ItemBuilder {
 
     public ItemBuilder flag(ItemFlag flag) {
         meta.addItemFlags(flag);
+        return this;
+    }
+
+    public ItemBuilder owner(String owner) {
+        ((SkullMeta) meta).setOwner(owner);
         return this;
     }
 

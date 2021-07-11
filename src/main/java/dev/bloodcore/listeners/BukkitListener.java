@@ -3,7 +3,8 @@ package dev.bloodcore.listeners;
 import dev.bloodcore.Core;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.User;
-import dev.bloodcore.etc.YamlStorage;
+import dev.bloodcore.utils.ChatUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,19 +20,30 @@ public class BukkitListener implements Listener {
         User user = new User(e.getPlayer());
         if (user.isVanished()) {
             e.setJoinMessage(null);
+        } else {
+            if (!Config.JOIN_MESSAGE.getString().isEmpty()) {
+                e.setJoinMessage(ChatUtil.color(Config.JOIN_MESSAGE.getString()
+                        .replace("%color%", user.getRank().getColor())
+                        .replace("%prefix%", user.getRank().getPrefix())
+                        .replace("%player%", user.name())
+                ));
+            }
         }
         Core.i().getUsers().add(user);
         Core.i().getMongoManager().updateUser(user);
 
         if (Config.SPAWN_ON_JOIN.getBoolean()) {
-            YamlStorage worldConfig = Core.i().getWorldConfig();
-            for (String key : worldConfig.getKeys(false)) {
-                if (worldConfig.get(key + ".spawn") != null) {
-
-                    Location loc = (Location) worldConfig.get(key + ".spawn");
-                    e.getPlayer().teleport(loc);
-                    return;
-                }
+            if (Core.i().getConfig().contains("spawn")) {
+                String[] info = Core.i().getConfig().getString("spawn").split(";");
+                Location spawn = new Location(
+                        Bukkit.getWorld(info[0]),
+                        Double.parseDouble(info[1]),
+                        Double.parseDouble(info[2]),
+                        Double.parseDouble(info[3]),
+                        Float.parseFloat(info[4]),
+                        Float.parseFloat(info[5])
+                );
+                e.getPlayer().teleport(spawn);
             }
         }
     }
@@ -42,6 +54,14 @@ public class BukkitListener implements Listener {
         if (user != null) {
             if (user.isVanished()) {
                 e.setQuitMessage(null);
+            } else {
+                if (!Config.JOIN_MESSAGE.getString().isEmpty()) {
+                    e.setQuitMessage(ChatUtil.color(Config.QUIT_MESSAGE.getString()
+                            .replace("%color%", user.getRank().getColor())
+                            .replace("%prefix%", user.getRank().getPrefix())
+                            .replace("%player%", user.name())
+                    ));
+                }
             }
             user.unload();
             Core.i().getUsers().remove(user);
@@ -54,6 +74,14 @@ public class BukkitListener implements Listener {
         if (user != null) {
             if (user.isVanished()) {
                 e.setLeaveMessage(null);
+            } else {
+                if (!Config.JOIN_MESSAGE.getString().isEmpty()) {
+                    e.setLeaveMessage(ChatUtil.color(Config.QUIT_MESSAGE.getString()
+                            .replace("%color%", user.getRank().getColor())
+                            .replace("%prefix%", user.getRank().getPrefix())
+                            .replace("%player%", user.name())
+                    ));
+                }
             }
             user.unload();
             Core.i().getUsers().remove(user);
