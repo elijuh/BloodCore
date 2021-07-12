@@ -38,6 +38,35 @@ public class StaffListener implements Listener {
                     }
                 }
             }
+            // if (user.isVanished()) {
+            //     e.setCancelled(true);
+            //     if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            //         if (e.getClickedBlock() != null && e.getClickedBlock().getState() instanceof InventoryHolder) {
+            //             InventoryHolder holder = (InventoryHolder) e.getClickedBlock().getState();
+            //             Inventory inventory = holder.getInventory();
+//
+            //             Inventory fakeInv = Bukkit.createInventory(null, inventory.getSize(), ChatUtil.color("&7Silent Chest"));
+            //             fakeInv.setContents(inventory.getContents());
+//
+            //             e.getPlayer().openInventory(fakeInv);
+//
+            //             new BukkitRunnable() {
+            //                 @Override
+            //                 public void run() {
+            //                     if (e.getPlayer().getInventory().getName().contains("Silent Chest")) {
+            //
+            //                         cancel();
+            //                     }
+            //                     inventory.setContents(fakeInv.getContents());
+//
+//
+            //                 }
+            //             }.runTaskTimer(Core.i(), 0L, 2L);
+//
+            //         }
+            //     }
+
+
         }
     }
 

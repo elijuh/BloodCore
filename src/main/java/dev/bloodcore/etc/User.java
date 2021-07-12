@@ -25,7 +25,7 @@ public class User {
     private Rank rank;
     private String tag;
     private GUI currentGUI;
-    private boolean vanished, staffMode;
+    private boolean vanished, staffMode, frozen;
 
     public User(Player player) {
         this.player = player;
