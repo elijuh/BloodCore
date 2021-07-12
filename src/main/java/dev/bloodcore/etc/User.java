@@ -56,14 +56,6 @@ public class User {
         settings = data.get("settings", Document.class);
 
         ReflectionUtil.setPermissibleBase(player, new CustomPermissionBase(this));
-
-        if (player.hasPermission("blood.command.staffmode") && Core.i().getStaffManager().getStaffConfig().getBoolean("staffmode.enable-on-join")) {
-            Core.i().getStaffManager().enterStaffMode(this);
-        }
-
-        if (player.hasPermission("blood.command.vanish") && Core.i().getStaffManager().getStaffConfig().getBoolean("vanish.enable-on-join")) {
-            Core.i().getStaffManager().vanish(this);
-        }
     }
 
     public void unload() {

@@ -29,14 +29,12 @@ public class StaffListener implements Listener {
         if (user != null) {
             if (user.isStaffMode()) {
                 e.setCancelled(true);
-                if (e.getAction() == Action.RIGHT_CLICK_AIR) {
-                    ItemStack item = e.getItem();
-                    if (item != null) {
-                        if (item.getType() == Material.INK_SACK) {
-                            e.getPlayer().performCommand("vanish");
-                        } else if (item.getType() == Material.SKULL_ITEM) {
-                            //do later when i make guis
-                        }
+                ItemStack item = e.getItem();
+                if (item != null) {
+                    if (item.getType() == Material.INK_SACK && e.getAction() == Action.RIGHT_CLICK_AIR) {
+                        e.getPlayer().performCommand("vanish");
+                    } else if (item.getType() == Material.SKULL_ITEM && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+                        e.getPlayer().performCommand("stafflist");
                     }
                 }
             }

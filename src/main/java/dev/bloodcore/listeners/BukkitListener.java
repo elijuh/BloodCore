@@ -49,6 +49,14 @@ public class BukkitListener implements Listener {
                 e.getPlayer().teleport(spawn);
             }
         }
+
+        if (e.getPlayer().hasPermission("blood.command.staffmode") && Core.i().getStaffManager().getStaffConfig().getBoolean("staffmode.enable-on-join")) {
+            Core.i().getStaffManager().enterStaffMode(user);
+        }
+
+        if (e.getPlayer().hasPermission("blood.command.vanish") && Core.i().getStaffManager().getStaffConfig().getBoolean("vanish.enable-on-join")) {
+            Core.i().getStaffManager().vanish(user);
+        }
     }
 
     @EventHandler

@@ -134,13 +134,13 @@ public class HistoryGUI implements GUI {
                 Document removedBy = data.containsKey("removed") ? Core.i().getMongoManager().getUserFromUUID(data.get("removed", Document.class).getString("by")) : null;
                 ItemBuilder item = ItemBuilder.create(Material.BOOK).name("&6ID: " + data.getInteger("_id"))
                         .lore("&7&m---------------------------------")
-                        .lore("&8» &bStatus: " + (inactive ? "&cInactive" : "&aActive"))
-                        .lore("&8» &bPunished By: &7" + Core.i().getMongoManager().getUserFromUUID(data.getString("executor")).getString("name"))
-                        .lore("&8» &bRemoved By: " + (data.containsKey("removed") ? (removedBy == null ? "Console" : removedBy.getString("name")) : "&cN/A"))
-                        .lore("&8» &bDate Of: &7" + Core.i().getDateFormat().format(new Date(data.getLong("time"))) + " " + timezone)
-                        .lore("&8» &bLength: &7" + (data.getLong("length") == -1 ? "Permanent" : Core.i().getPunishmentManager().formatMillis(data.getLong("length"))))
-                        .lore("&8» &bReason: &7" + data.getString("reason"))
-                        .lore("&8» &bServer: &7" + data.getString("server"))
+                        .lore("&8» &eStatus: " + (inactive ? "&cInactive" : "&aActive"))
+                        .lore("&8» &ePunished By: &f" + Core.i().getMongoManager().getUserFromUUID(data.getString("executor")).getString("name"))
+                        .lore("&8» &eRemoved By: " + (data.containsKey("removed") ? (removedBy == null ? "&fConsole" : removedBy.getString("name")) : "&cN/A"))
+                        .lore("&8» &eDate Of: &f" + Core.i().getDateFormat().format(new Date(data.getLong("time"))) + " " + timezone)
+                        .lore("&8» &eLength: &f" + (data.getLong("length") == -1 ? "Permanent" : Core.i().getPunishmentManager().formatMillis(data.getLong("length"))))
+                        .lore("&8» &eReason: &f" + data.getString("reason"))
+                        .lore("&8» &eServer: &f" + data.getString("server"))
                         .lore("&7&m---------------------------------");
                 if (user.getPlayer().hasPermission("blood.history.delete")) {
                     item
