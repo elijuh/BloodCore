@@ -21,17 +21,7 @@ public class BukkitListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void on(PlayerJoinEvent e) {
         User user = new User(e.getPlayer());
-        if (user.isVanished()) {
-            e.setJoinMessage(null);
-        } else {
-            if (!Config.JOIN_MESSAGE.getString().isEmpty()) {
-                e.setJoinMessage(ChatUtil.color(Config.JOIN_MESSAGE.getString()
-                        .replace("%color%", user.getRank().getColor())
-                        .replace("%prefix%", user.getRank().getPrefix())
-                        .replace("%player%", user.name())
-                ));
-            }
-        }
+
         Core.i().getUsers().add(user);
         Core.i().getMongoManager().updateUser(user);
 
@@ -56,6 +46,18 @@ public class BukkitListener implements Listener {
 
         if (e.getPlayer().hasPermission("blood.command.vanish") && Core.i().getStaffManager().getStaffConfig().getBoolean("vanish.enable-on-join")) {
             Core.i().getStaffManager().vanish(user);
+        }
+
+        if (user.isVanished()) {
+            e.setJoinMessage(null);
+        } else {
+            if (!Config.JOIN_MESSAGE.getString().isEmpty()) {
+                e.setJoinMessage(ChatUtil.color(Config.JOIN_MESSAGE.getString()
+                        .replace("%color%", user.getRank().getColor())
+                        .replace("%prefix%", user.getRank().getPrefix())
+                        .replace("%player%", user.name())
+                ));
+            }
         }
     }
 
