@@ -9,6 +9,7 @@ import org.bukkit.util.StringUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @UtilityClass
@@ -48,5 +49,15 @@ public class PlayerUtil {
             }
         }
         return players;
+    }
+
+    public List<User> getOnlineStaff() {
+        List<User> users = new ArrayList<>();
+        for (User user : Core.i().getUsers()) {
+            if (user.getPlayer().hasPermission("blood.command.staffmode")) {
+                users.add(user);
+            }
+        }
+        return users;
     }
 }

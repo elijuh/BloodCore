@@ -9,6 +9,7 @@ import dev.bloodcore.commands.main.BloodCommand;
 import dev.bloodcore.commands.punishments.*;
 import dev.bloodcore.commands.rank.RankCommand;
 import dev.bloodcore.commands.staff.AltsCommand;
+import dev.bloodcore.commands.staff.StaffListCommand;
 import dev.bloodcore.commands.staff.StaffModeCommand;
 import dev.bloodcore.commands.staff.VanishCommand;
 import dev.bloodcore.commands.user.UserCommand;
@@ -150,6 +151,7 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             new SetSpawnCommand();
             new AltsCommand();
             new HistoryCommand();
+            new StaffListCommand();
 
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
