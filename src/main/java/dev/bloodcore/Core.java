@@ -152,6 +152,7 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             new AltsCommand();
             new HistoryCommand();
             new StaffListCommand();
+            new FreezeCommand();
 
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);

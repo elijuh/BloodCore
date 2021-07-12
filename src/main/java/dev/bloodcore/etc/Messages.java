@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public enum Messages {
     CORE_PREFIX("prefix", "&6&lCore &8» &r"),
+    FREEZE_LINK("freeze-link", "ts.example.net"),
     CHAT_COOLDOWN_MSG("chat-manager.cooldown-message", "&cPlease wait &7%chat-cooldown%s &cbefore sending another msg."),
     PING("commands.ping", "&e%prefix%%target%&e's Ping: &a%ping%ms"),
     MSG_TO("commands.msg.to", "&7(To %rank_color%%name%&7) "),

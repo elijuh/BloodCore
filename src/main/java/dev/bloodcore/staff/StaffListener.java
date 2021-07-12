@@ -15,10 +15,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 public class StaffListener implements Listener {
@@ -89,7 +86,17 @@ public class StaffListener implements Listener {
             }
         }
     }
-
+    @EventHandler
+    public void on(PlayerMoveEvent e) {
+        User user = Core.i().getUser(e.getPlayer().getName());
+        if (user != null) {
+            if (user.isFrozen()) {
+               if(e.getFrom().getX() != e.getTo().getX() || e.getFrom().getZ() != e.getTo().getZ()){
+                   e.setTo(e.getFrom());
+               }
+            }
+        }
+    }
     @EventHandler
     public void on(BlockPlaceEvent e) {
         User user = Core.i().getUser(e.getPlayer().getName());
