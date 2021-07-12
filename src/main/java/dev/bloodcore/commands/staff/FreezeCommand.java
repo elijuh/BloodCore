@@ -1,9 +1,8 @@
-package dev.bloodcore.commands.punishments;
+package dev.bloodcore.commands.staff;
 
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
-import dev.bloodcore.commands.essential.MessageCommand;
 import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
@@ -43,15 +42,15 @@ public class FreezeCommand extends Command {
                 user.setFrozen(false);
             } else {
                 sender.sendMessage(ChatUtil.color("&aYou've frozen " + user.name()));
+
                 user.setFrozen(true);
+
                 StringBuilder stringBuilder = new StringBuilder();
-                String[] values = new String[]{"&f████&c█&f████", "&f███&c█&6█&c█&f███ &4&lDo NOT log out!", "&f██&c█&6█&0█&6█&c█&f██ &cIf you do, you will be banned!", "&f██&c█&6█&0█&6█&c█&f██  &ePlease connect to the waiting room below", "&f█&c█&6██&0█&6██&c█&f█ &e%frozen-link%", "&f█&c█&6█████&c█&f█", "&c█&6███&0█&6███&c█", "&c█████████"};
-                for (String value : values) {
-                    stringBuilder.append(value).append("\n");
+                for (String line : Messages.FREEZE_MESSAGE.getStringList()) {
+                    stringBuilder.append(line).append("\n");
                 }
 
-                String reason = stringBuilder.toString().replace("%frozen-link%", Messages.FREEZE_LINK.getString());;
-                //todo reason.replace
+                String reason = stringBuilder.toString();
 
                 new BukkitRunnable() {
                     @Override
@@ -64,8 +63,6 @@ public class FreezeCommand extends Command {
                     }
                 }.runTaskTimer(Core.i(), 0L, 200L);
             }
-
-
         } else {
             sender.sendMessage(ChatUtil.color("&cUsage: /freeze <player>"));
         }

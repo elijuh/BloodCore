@@ -1,12 +1,15 @@
 package dev.bloodcore.etc;
 
+import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public enum Messages {
     CORE_PREFIX("prefix", "&6&lCore &8» &r"),
-    FREEZE_LINK("freeze-link", "ts.example.net"),
+    FREEZE_MESSAGE("staff.freeze-message", ImmutableList.of("&f████&c█&f████", "&f███&c█&6█&c█&f███ &4&lDo NOT log out!", "&f██&c█&6█&0█&6█&c█&f██ &cIf you do, you will be banned!", "&f██&c█&6█&0█&6█&c█&f██ &ePlease join waiting room below:", "&f█&c█&6██&0█&6██&c█&f█ &cts.example.net", "&f█&c█&6█████&c█&f█", "&c█&6███&0█&6███&c█", "&c█████████")),
     CHAT_COOLDOWN_MSG("chat-manager.cooldown-message", "&cPlease wait &7%chat-cooldown%s &cbefore sending another msg."),
     PING("commands.ping", "&e%prefix%%target%&e's Ping: &a%ping%ms"),
     MSG_TO("commands.msg.to", "&7(To %rank_color%%name%&7) "),
@@ -54,9 +57,9 @@ public enum Messages {
 
     private static final YamlStorage messages = Core.i().getMessages();
     private final String path;
-    private final String def;
+    private final Object def;
 
-    Messages(String path, String def) {
+    Messages(String path, Object def) {
         this.path = path;
         this.def = def;
     }
@@ -69,5 +72,9 @@ public enum Messages {
     @Override
     public String toString() {
         return getString();
+    }
+
+    public List<String> getStringList() {
+        return messages.getStringList(path);
     }
 }

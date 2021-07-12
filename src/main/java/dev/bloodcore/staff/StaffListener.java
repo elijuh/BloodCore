@@ -86,17 +86,19 @@ public class StaffListener implements Listener {
             }
         }
     }
+
     @EventHandler
     public void on(PlayerMoveEvent e) {
         User user = Core.i().getUser(e.getPlayer().getName());
         if (user != null) {
             if (user.isFrozen()) {
-               if(e.getFrom().getX() != e.getTo().getX() || e.getFrom().getZ() != e.getTo().getZ()){
+               if(e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
                    e.setTo(e.getFrom());
                }
             }
         }
     }
+
     @EventHandler
     public void on(BlockPlaceEvent e) {
         User user = Core.i().getUser(e.getPlayer().getName());
@@ -121,7 +123,7 @@ public class StaffListener implements Listener {
     public void on(EntityDamageByEntityEvent e) {
         User user = Core.i().getUser(e.getDamager().getName());
         if (e.getDamager() instanceof Player && user != null) {
-            if (user.isStaffMode() || user.isVanished()) {
+            if (user.isStaffMode() || user.isVanished() || user.isFrozen()) {
                 e.setCancelled(true);
             }
         }
@@ -141,7 +143,7 @@ public class StaffListener implements Listener {
     public void on(EntityDamageEvent e) {
         User user = Core.i().getUser(e.getEntity().getName());
         if (e.getEntity() instanceof Player && user != null) {
-            if (user.isStaffMode() || user.isVanished()) {
+            if (user.isStaffMode() || user.isVanished() || user.isFrozen()) {
                 e.setCancelled(true);
             }
         }
