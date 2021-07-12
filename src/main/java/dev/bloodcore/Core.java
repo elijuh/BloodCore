@@ -147,9 +147,10 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             new SpawnCommand();
             new InvSeeCommand();
             new TpCommand();
-            new AltsCommand();
-
             new SetSpawnCommand();
+            new AltsCommand();
+            new HistoryCommand();
+
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
             Bukkit.getPluginManager().registerEvents(new WorldListener(), this);

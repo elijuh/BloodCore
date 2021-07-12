@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.punishments.PType;
-import dev.bloodcore.ranks.Rank;
 import dev.bloodcore.utils.ChatUtil;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -34,8 +33,7 @@ public class AltsCommand extends Command {
                 StringBuilder accounts = new StringBuilder("&6Showing Accounts on &r" + target.getString("name") + "'s IP&6.");
                 for (Document user : Core.i().getPunishmentManager().getAccounts(target.getString("ip"))) {
                     accounts.append("\n&8» ");
-                    Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
-                    accounts.append(rank.getColor()).append(user.getString("name"));
+                    accounts.append(user.getString("display"));
                     if (Core.i().getPunishmentManager().getActivePunishment(user, PType.IPBAN) != null) {
                         accounts.append(" &8(&4IP Banned&8)");
                     } else if (Core.i().getPunishmentManager().getActivePunishment(user, PType.BAN) != null) {

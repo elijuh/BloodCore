@@ -4,10 +4,8 @@ import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.etc.Messages;
-import dev.bloodcore.etc.User;
 import dev.bloodcore.etc.YamlStorage;
 import dev.bloodcore.utils.ChatUtil;
-import dev.bloodcore.utils.PlayerUtil;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -39,7 +37,7 @@ public class SetSpawnCommand extends Command {
         Location loc = ((Player) sender).getLocation();
         String spawn = loc.getWorld().getName() + ";" + loc.getX() + ";" + loc.getY() + ";" + loc.getZ() + ";" + loc.getYaw() + ";" + loc.getPitch();
         Core.i().getConfig().set("spawn", spawn);
-        sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX + " &eYou've set the server's spawn location!"));
-        worldConfig.save();
+        Core.i().saveConfig();
+        sender.sendMessage(ChatUtil.color(Messages.CORE_PREFIX + "&aSpawn has been set to your location."));
     }
 }

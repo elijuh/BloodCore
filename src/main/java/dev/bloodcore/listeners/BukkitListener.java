@@ -6,9 +6,12 @@ import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -85,6 +88,27 @@ public class BukkitListener implements Listener {
             }
             user.unload();
             Core.i().getUsers().remove(user);
+        }
+    }
+
+    @EventHandler
+    public void on(InventoryClickEvent e) {
+        User user = Core.i().getUser((Player) e.getView().getPlayer());
+        if (user != null) {
+            if (user.getCurrentGUI() != null) {
+                user.getCurrentGUI().handle(e);
+            }
+        }
+    }
+
+    @EventHandler
+    public void on(InventoryCloseEvent e) {
+        User user = Core.i().getUser((Player) e.getView().getPlayer());
+        if (user != null) {
+            if (user.getCurrentGUI() != null) {
+                user.getCurrentGUI().handle(e);
+                user.setCurrentGUI(null);
+            }
         }
     }
 }

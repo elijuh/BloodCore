@@ -24,6 +24,7 @@ public class User {
     private final Player player;
     private Rank rank;
     private String tag;
+    private GUI currentGUI;
     private boolean vanished, staffMode;
 
     public User(Player player) {
