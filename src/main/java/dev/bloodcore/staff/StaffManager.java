@@ -2,14 +2,18 @@ package dev.bloodcore.staff;
 
 import com.google.common.collect.ImmutableList;
 import dev.bloodcore.Core;
+import dev.bloodcore.api.events.PlayerToggleStaffEvent;
+import dev.bloodcore.api.events.PlayerToggleVanishEvent;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.etc.YamlStorage;
 import dev.bloodcore.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.io.File;
 
@@ -95,7 +99,12 @@ public class StaffManager {
     }
 
     public void vanish(User user) {
+        PlayerToggleVanishEvent event = new PlayerToggleVanishEvent(user.getPlayer(), PlayerToggleVanishEvent.State.ENTER);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         user.setVanished(true);
+        user.getPlayer().setMetadata("vanished", new FixedMetadataValue(Core.i(), true));
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.hasPermission("blood.vanish.see")) {
@@ -109,7 +118,12 @@ public class StaffManager {
     }
 
     public void unvanish(User user) {
+        PlayerToggleVanishEvent event = new PlayerToggleVanishEvent(user.getPlayer(), PlayerToggleVanishEvent.State.LEAVE);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         user.setVanished(false);
+        user.getPlayer().removeMetadata("vanished", Core.i());
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.canSee(user.getPlayer())) {
@@ -123,12 +137,17 @@ public class StaffManager {
     }
 
     public void enterStaffMode(User user) {
+        PlayerToggleStaffEvent event = new PlayerToggleStaffEvent(user.getPlayer(), PlayerToggleStaffEvent.State.ENTER);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         user.getPlayer().setAllowFlight(true);
         user.getPlayer().setFlying(true);
         user.getPlayer().setHealth(user.getPlayer().getMaxHealth());
         user.getPlayer().setFoodLevel(40);
         user.getPlayer().setSaturation(40);
         user.setStaffMode(true);
+        user.getPlayer().setMetadata("staffmode", new FixedMetadataValue(Core.i(), true));
         ItemStack[] contents = new ItemStack[40];
 
         for (int i = 0; i < 40; i++) {
@@ -152,9 +171,16 @@ public class StaffManager {
     }
 
     public void leaveStaffMode(User user) {
-        user.getPlayer().setAllowFlight(false);
-        user.getPlayer().setFlying(false);
+        PlayerToggleStaffEvent event = new PlayerToggleStaffEvent(user.getPlayer(), PlayerToggleStaffEvent.State.LEAVE);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        if (user.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            user.getPlayer().setAllowFlight(false);
+            user.getPlayer().setFlying(false);
+        }
         user.setStaffMode(false);
+        user.getPlayer().removeMetadata("staffmode", Core.i());
         ItemStack[] contents = user.get("staffmode_inv");
 
         if (contents != null) {

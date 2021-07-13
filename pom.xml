@@ -113,6 +113,11 @@
             <version>3.6.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.elijuh</groupId>
+            <artifactId>BloodCoreAPI</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
 </project>

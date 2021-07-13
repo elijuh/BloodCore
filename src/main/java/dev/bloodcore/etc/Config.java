@@ -14,6 +14,7 @@ public enum Config {
     REDIS_PORT("redis.port", 6379),
     REDIS_PASSWORD("redis.password", ""),
     SERVER_NAME("server-name", "Hub"),
+    STAFF_CHAT_PREFIX("staff-chat-prefix", "@"),
     GLOBAL_CHAT_TIMER("chat.timer", 0),
     GLOBAL_CHAT_FORMAT("chat.format", "%rank_prefix%%player% &8» &r%message%"),
     GLOBAL_CHAT_COOLDOWN_MESSAGE("chat.cooldown", "&cYou are on cooldown for &e%delay% &cmore seconds!"),

@@ -34,6 +34,7 @@ public enum Messages {
     CHAT_DENY_MUTED("chat-deny-muted", "&c&m------------------------------------\n&cYou are currently muted for %reason%.\n&7Duration: &c%duration%\n \n&6You can appeal at %appeal%\n&c&m------------------------------------"),
     SILENT_PREFIX("staff.silent-prefix", "&7(Silent) &r"),
     CONSOLE_NAME("staff.console-name", "&4&lConsole"),
+    STAFF_CHAT_FORMAT("staff.chat-format", "&7[%server%] %prefix_color%%player%&7: %message%"),
     PUNISH_HOVER_INFO("staff.punish-hover-info", "&7Reason: &f%reason%\n&7Duration: &f%duration%"),
     REMOVAL_HOVER_INFO("staff.removal-hover-info", "&7Reason: &f%reason%"),
     KICK_WARN_HOVER_INFO("staff.kick-warn-hover-info", "&7Reason: &f%reason%"),
