@@ -1,5 +1,6 @@
 package dev.bloodcore;
 
+import com.google.gson.Gson;
 import com.sk89q.wepif.PermissionsProvider;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import dev.bloodcore.chat.ChatManager;
@@ -12,6 +13,7 @@ import dev.bloodcore.commands.staff.*;
 import dev.bloodcore.commands.user.UserCommand;
 import dev.bloodcore.commands.world.WorldCommand;
 import dev.bloodcore.db.MongoManager;
+import dev.bloodcore.db.RedisManager;
 import dev.bloodcore.etc.Config;
 import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
@@ -53,6 +55,7 @@ import java.util.logging.Logger;
 @Getter
 public class Core extends JavaPlugin implements PermissionsProvider {
     private final DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy h:mm aa");
+    private final Gson gson = new Gson();
     private final Set<User> users = new HashSet<>();
     private final Set<DisablingThread> threads = new HashSet<>();
     private static Core instance;
@@ -64,6 +67,7 @@ public class Core extends JavaPlugin implements PermissionsProvider {
 
     private WorldManager worldManager;
     private MongoManager mongoManager;
+    private RedisManager redisManager;
     private ChatManager chatManager;
     private RankManager rankManager;
     private PunishmentManager punishmentManager;
@@ -110,6 +114,7 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             worldManager.loadWorlds();
 
             mongoManager = new MongoManager();
+            redisManager = new RedisManager();
             chatManager = new ChatManager();
             rankManager = new RankManager();
             punishmentManager = new PunishmentManager();
@@ -184,6 +189,8 @@ public class Core extends JavaPlugin implements PermissionsProvider {
                 thread.disable();
             }
 
+            redisManager.shutdown();
+
             if (expansion != null && expansion.isRegistered()) {
                 expansion.unregister();
             }
@@ -240,8 +247,8 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             if (!file.exists()) {
                 file.mkdir();
             }
-            for (String lib : new String[]{"mongo.jar"}) {
-                File library = new File(file.getPath() + "/" + lib);
+            for (String lib : new String[]{"mongo.jar", "jedis.jar", "slf4j-api.jar"}) {
+                File library = new File(file.getPath(), lib);
                 if(!library.exists()) {
                     System.out.println("Downloading " + lib + "...");
                     FileUtils.copyURLToFile(new URL("https://hardstyles.me/bloodcore/" + lib), library);

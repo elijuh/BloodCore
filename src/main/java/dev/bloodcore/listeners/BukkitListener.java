@@ -48,6 +48,12 @@ public class BukkitListener implements Listener {
             Core.i().getStaffManager().vanish(user);
         }
 
+        if (e.getPlayer().hasPermission("blood.staff.alerts")) {
+            String message = "&6[Staff] " + user.getRank().getColor() + user.name() + " &ehas connected to &6" + Config.SERVER_NAME + "&e.";
+            String json = "{\"permission\": \"blood.staff.alerts\", \"message\": \"%s\"}";
+            Core.i().getRedisManager().getPubJedis().publish("MESSAGING", String.format(json, message));
+        }
+
         if (user.isVanished()) {
             e.setJoinMessage(null);
         } else {

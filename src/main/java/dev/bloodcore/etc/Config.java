@@ -10,6 +10,9 @@ import java.util.List;
 public enum Config {
     LICENSE("license", "LicenseGoesHere"),
     MONGO_CONNECTION("mongo-db.connection-string", ""),
+    REDIS_HOST("redis.host", ""),
+    REDIS_PORT("redis.port", 6379),
+    REDIS_PASSWORD("redis.password", ""),
     SERVER_NAME("server-name", "Hub"),
     GLOBAL_CHAT_TIMER("chat.timer", 0),
     GLOBAL_CHAT_FORMAT("chat.format", "%rank_prefix%%player% &8» &r%message%"),
