@@ -20,10 +20,12 @@ import java.util.List;
 
 public class StaffGUI implements GUI {
     private static final ItemStack filler = ItemBuilder.create(Material.STAINED_GLASS_PANE).dura(15).name(" ").build();
+    private final Player holder;
     private final Inventory inv;
     private int page, staffCount;
 
     public StaffGUI(Player p) {
+        holder = p;
         inv = Bukkit.createInventory(null, 36, ChatUtil.color("&6&lOnline Staff"));
 
         for (int i = 0; i < 9; i++) {
@@ -92,7 +94,7 @@ public class StaffGUI implements GUI {
                         .lore("&8» &eRank: " + user.getRank().getColor() + user.getRank().getId())
                         .lore("&8» &eVanished: " + (user.isVanished() ? "&aEnabled" : "&cDisabled"))
                         .lore("&8» &eStaff Mode: " + (user.isStaffMode() ? "&aEnabled" : "&cDisabled"));
-                if (user.getPlayer().hasPermission("blood.command.tp")) {
+                if (holder.hasPermission("blood.command.tp")) {
                     item.lore(" ").lore("&7Right-Click to teleport.");
                 }
                 item.lore("&7&m---------------------------------");

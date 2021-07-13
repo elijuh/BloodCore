@@ -27,27 +27,31 @@ public class BloodExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-        Document user = Core.i().getMongoManager().getUserFromUUID(player.getUniqueId().toString());
-        if (user != null) {
-            switch (params.toLowerCase()) {
-                case "prefix": {
-                    Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
-                    return rank.getPrefix();
+        try {
+            Document user = Core.i().getMongoManager().getUserFromUUID(player.getUniqueId().toString());
+            if (user != null) {
+                switch (params.toLowerCase()) {
+                    case "prefix": {
+                        Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
+                        return rank.getPrefix();
+                    }
+                    case "rank": {
+                        Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
+                        return rank.getId();
+                    }
+                    case "rank_color":
+                    case "prefix_color": {
+                        Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
+                        return rank.getColor();
+                    }
+                    case "tag":
+                        return user.containsKey("tag") ? user.getString("tag") : "";
                 }
-                case "rank": {
-                    Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
-                    return rank.getId();
-                }
-                case "rank_color":
-                case "prefix_color": {
-                    Rank rank = Core.i().getRankManager().getRank(user.getString("rank"), true);
-                    return rank.getColor();
-                }
-                case "tag":
-                    return user.containsKey("tag") ? user.getString("tag") : "";
             }
+            return "";
+        } catch (Exception e) {
+            return "";
         }
-        return "";
     }
 
     @Override

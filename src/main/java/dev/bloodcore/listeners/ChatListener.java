@@ -19,7 +19,7 @@ public class ChatListener implements Listener {
             e.setCancelled(true);
         } else {
             long remainingTime = (Config.GLOBAL_CHAT_TIMER.getInt() * 1000L) - (System.currentTimeMillis() - (long) user.getData().getOrDefault("lastChat", 0L));
-            if (remainingTime > 0) {
+            if (remainingTime > 0 && !p.hasPermission("blood.bypass.chatcooldown")) {
                 p.sendMessage(ChatUtil.color(Config.GLOBAL_CHAT_COOLDOWN_MESSAGE.getString()
                         .replace("%delay%", Double.toString(Math.round(remainingTime / 100.0) / 10.0))));
                 e.setCancelled(true);

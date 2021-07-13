@@ -11,6 +11,9 @@ public enum Messages {
     CORE_PREFIX("prefix", "&6&lCore &8» &r"),
     FREEZE_MESSAGE("staff.freeze-message", ImmutableList.of("&f████&c█&f████", "&f███&c█&6█&c█&f███ &4&lDo NOT log out!", "&f██&c█&6█&0█&6█&c█&f██ &cIf you do, you will be banned!", "&f██&c█&6█&0█&6█&c█&f██ &ePlease join waiting room below:", "&f█&c█&6██&0█&6██&c█&f█ &cts.example.net", "&f█&c█&6█████&c█&f█", "&c█&6███&0█&6███&c█", "&c█████████")),
     CHAT_COOLDOWN_MSG("chat-manager.cooldown-message", "&cPlease wait &7%chat-cooldown%s &cbefore sending another msg."),
+    GLOBAL_CHAT_MUTED("chat-manager.muted", "&cChat has been muted by %player%&c."),
+    GLOBAL_CHAT_UNMUTED("chat-manager.unmuted", "&aChat has been unmuted by %player%&a."),
+    GLOBAL_CHAT_CLEARED("chat-manager.cleared", "&aChat has been cleared by %player%&a."),
     PING("commands.ping", "&e%prefix%%target%&e's Ping: &a%ping%ms"),
     MSG_TO("commands.msg.to", "&7(To %rank_color%%name%&7) "),
     MSG_FROM("commands.msg.from", "&7(From %rank_color%%name%&7) "),
@@ -54,7 +57,6 @@ public enum Messages {
     SUDO_YOURSELF("commands.sudo.self", "&cYou can't /sudo yourself!"),
     SUDO_OTHER("commands.sudo.other", "&aYou made %target_prefix%%target% &aexecute &r\"%command%\""),
     SUDO_STAFF("commands.sudo.staffmessage", "&c&l[SUDO] %sender_prefix%%sender% &7made %target_prefix%%target% &7execute &r\"%command%\"");
-
     private static final YamlStorage messages = Core.i().getMessages();
     private final String path;
     private final Object def;
