@@ -5,10 +5,10 @@
 - Basic essentials commands (✅)
 - Punishment stuff (✅)
 - chat manager (✅)
-- all the staff things (chat)
+- all the staff things (✅)
 - messaging (✅)
 - placeholder expansion (✅)
-- sudo (❌)
+- sudo (✅)
 - tags? (❌)
 
 # sheesh
