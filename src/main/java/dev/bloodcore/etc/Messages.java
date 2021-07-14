@@ -35,6 +35,8 @@ public enum Messages {
     SILENT_PREFIX("staff.silent-prefix", "&7(Silent) &r"),
     CONSOLE_NAME("staff.console-name", "&4&lConsole"),
     STAFF_CHAT_FORMAT("staff.chat-format", "&7[%server%] %prefix_color%%player%&7: %message%"),
+    STAFF_JOIN("staff.join", "&6[Staff] %prefix_color%%player% &ehas connected to &6%server%&6."),
+    STAFF_LEAVE("staff.leave", "&6[Staff] %prefix_color%%player% &ehas disconnected from &6%server%&6."),
     PUNISH_HOVER_INFO("staff.punish-hover-info", "&7Reason: &f%reason%\n&7Duration: &f%duration%"),
     REMOVAL_HOVER_INFO("staff.removal-hover-info", "&7Reason: &f%reason%"),
     KICK_WARN_HOVER_INFO("staff.kick-warn-hover-info", "&7Reason: &f%reason%"),

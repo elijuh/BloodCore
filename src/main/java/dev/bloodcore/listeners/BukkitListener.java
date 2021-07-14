@@ -2,6 +2,7 @@ package dev.bloodcore.listeners;
 
 import dev.bloodcore.Core;
 import dev.bloodcore.etc.Config;
+import dev.bloodcore.etc.Messages;
 import dev.bloodcore.etc.User;
 import dev.bloodcore.utils.ChatUtil;
 import org.bukkit.Bukkit;
@@ -49,7 +50,11 @@ public class BukkitListener implements Listener {
         }
 
         if (e.getPlayer().hasPermission("blood.staff.alerts")) {
-            String message = "&6[Staff] " + user.getRank().getColor() + user.name() + " &ehas connected to &6" + Config.SERVER_NAME + "&e.";
+            String message = Messages.STAFF_JOIN.getString()
+                    .replace("%prefix%", user.getRank().getPrefix())
+                    .replace("%prefix_color%", user.getRank().getColor())
+                    .replace("%player%", user.name())
+                    .replace("%server%", Config.SERVER_NAME.getString());
             String json = "{\"permission\": \"blood.staff.alerts\", \"message\": \"%s\"}";
             Core.i().getRedisManager().getPubJedis().publish("MESSAGING", String.format(json, message));
         }
@@ -84,7 +89,11 @@ public class BukkitListener implements Listener {
             }
 
             if (e.getPlayer().hasPermission("blood.staff.alerts")) {
-                String message = "&6[Staff] " + user.getRank().getColor() + user.name() + " &ehas disconnected from &6" + Config.SERVER_NAME + "&e.";
+                String message = Messages.STAFF_LEAVE.getString()
+                        .replace("%prefix%", user.getRank().getPrefix())
+                        .replace("%prefix_color%", user.getRank().getColor())
+                        .replace("%player%", user.name())
+                        .replace("%server%", Config.SERVER_NAME.getString());
                 String json = "{\"permission\": \"blood.staff.alerts\", \"message\": \"%s\"}";
                 Core.i().getRedisManager().getPubJedis().publish("MESSAGING", String.format(json, message));
             }
