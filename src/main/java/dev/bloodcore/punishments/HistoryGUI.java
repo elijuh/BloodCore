@@ -131,11 +131,12 @@ public class HistoryGUI implements GUI {
                 Document data = punishments.get(index++);
                 String timezone = Core.i().getDateFormat().getTimeZone().getDisplayName(Core.i().getDateFormat().getTimeZone().inDaylightTime(new Date()), TimeZone.SHORT);
                 boolean inactive = data.containsKey("removed") || (data.getLong("length") != -1 && System.currentTimeMillis() > data.getLong("time") + data.getLong("length"));
+                Document executedBy = data.containsKey("executor") ? Core.i().getMongoManager().getUserFromUUID(data.getString("executor")) : null;
                 Document removedBy = data.containsKey("removed") ? Core.i().getMongoManager().getUserFromUUID(data.get("removed", Document.class).getString("by")) : null;
                 ItemBuilder item = ItemBuilder.create(Material.BOOK).name("&6ID: " + data.getInteger("_id"))
                         .lore("&7&m---------------------------------")
                         .lore("&8» &eStatus: " + (inactive ? "&cInactive" : "&aActive"))
-                        .lore("&8» &ePunished By: &f" + Core.i().getMongoManager().getUserFromUUID(data.getString("executor")).getString("name"))
+                        .lore("&8» &ePunished By: &f" + (executedBy == null ? "Console" : executedBy.getString("name")))
                         .lore("&8» &eRemoved By: " + (data.containsKey("removed") ? (removedBy == null ? "&fConsole" : removedBy.getString("name")) : "&cN/A"))
                         .lore("&8» &eDate Of: &f" + Core.i().getDateFormat().format(new Date(data.getLong("time"))) + " " + timezone)
                         .lore("&8» &eLength: &f" + (data.getLong("length") == -1 ? "Permanent" : Core.i().getPunishmentManager().formatMillis(data.getLong("length"))))
