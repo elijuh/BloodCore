@@ -82,6 +82,13 @@ public class BukkitListener implements Listener {
                     ));
                 }
             }
+
+            if (e.getPlayer().hasPermission("blood.staff.alerts")) {
+                String message = "&6[Staff] " + user.getRank().getColor() + user.name() + " &ehas disconnected from &6" + Config.SERVER_NAME + "&e.";
+                String json = "{\"permission\": \"blood.staff.alerts\", \"message\": \"%s\"}";
+                Core.i().getRedisManager().getPubJedis().publish("MESSAGING", String.format(json, message));
+            }
+
             user.unload();
             Core.i().getUsers().remove(user);
         }
