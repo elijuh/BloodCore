@@ -137,7 +137,7 @@ public class HistoryGUI implements GUI {
                         .lore("&7&m---------------------------------")
                         .lore("&8» &eStatus: " + (inactive ? "&cInactive" : "&aActive"))
                         .lore("&8» &ePunished By: &f" + (executedBy == null ? "Console" : executedBy.getString("name")))
-                        .lore("&8» &eRemoved By: " + (data.containsKey("removed") ? (removedBy == null ? "&fConsole" : removedBy.getString("name")) : "&cN/A"))
+                        .lore("&8» &eRemoved By: " + (data.containsKey("removed") ? (removedBy == null ? "&fConsole" : "&f" + removedBy.getString("name")) : "&cN/A"))
                         .lore("&8» &eDate Of: &f" + Core.i().getDateFormat().format(new Date(data.getLong("time"))) + " " + timezone)
                         .lore("&8» &eLength: &f" + (data.getLong("length") == -1 ? "Permanent" : Core.i().getPunishmentManager().formatMillis(data.getLong("length"))))
                         .lore("&8» &eReason: &f" + data.getString("reason"))
