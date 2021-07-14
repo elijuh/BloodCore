@@ -92,7 +92,7 @@ public class StaffGUI implements GUI {
                 ItemBuilder item = ItemBuilder.create(Material.SKULL_ITEM).name(user.getRank().getPrefix() + user.name())
                         .lore("&7&m---------------------------------")
                         .lore("&8» &eRank: " + user.getRank().getColor() + user.getRank().getId())
-                        .lore("&8» &eVanished: " + (user.isVanished() ? "&aEnabled" : "&cDisabled"))
+                        .lore("&8» &eVanish: " + (user.isVanished() ? "&aEnabled" : "&cDisabled"))
                         .lore("&8» &eStaff Mode: " + (user.isStaffMode() ? "&aEnabled" : "&cDisabled"));
                 if (holder.hasPermission("blood.command.tp")) {
                     item.lore(" ").lore("&7Right-Click to teleport.");
