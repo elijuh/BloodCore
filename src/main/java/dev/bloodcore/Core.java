@@ -2,7 +2,6 @@ package dev.bloodcore;
 
 import com.google.gson.Gson;
 import com.sk89q.wepif.PermissionsProvider;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import dev.bloodcore.chat.ChatManager;
 import dev.bloodcore.commands.Command;
 import dev.bloodcore.commands.essential.*;
@@ -163,10 +162,6 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
             Bukkit.getPluginManager().registerEvents(new StaffListener(), this);
 
-            if (getWorldEdit() != null) {
-                getWorldEdit().getPermissionsResolver().setPluginPermissionsResolver(this);
-            }
-
             for (Player p : Bukkit.getOnlinePlayers()) {
                 users.add(new User(p));
             }
@@ -195,15 +190,6 @@ public class Core extends JavaPlugin implements PermissionsProvider {
                 expansion.unregister();
             }
         }
-    }
-
-    public WorldEditPlugin getWorldEdit() {
-        try {
-            Class.forName("com.sk89q.worldedit.bukkit.WorldEditPlugin");
-        } catch (Exception e) {
-            return null;
-        }
-        return (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
     }
 
     public User getUser(Player player) {
