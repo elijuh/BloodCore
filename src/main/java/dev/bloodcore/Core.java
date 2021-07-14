@@ -45,9 +45,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -229,7 +227,7 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             dir.mkdir();
         }
         try {
-            File file = new File(Core.i().getDataFolder() + "/lib");
+            File file = new File(Core.i().getDataFolder(), "lib");
             if (!file.exists()) {
                 file.mkdir();
             }
@@ -305,13 +303,23 @@ public class Core extends JavaPlugin implements PermissionsProvider {
     }
 
     @Override
-    public boolean inGroup(String s, String s1) {
+    public boolean inGroup(String name, String group) {
+        User user = getUser(name);
+        if (user != null) {
+            return user.getRank().getId().toLowerCase().equals(group) || user.getRank().getParents().stream().anyMatch(parent -> parent.equalsIgnoreCase(group));
+        }
         return false;
     }
 
     @Override
-    public String[] getGroups(String s) {
-        return new String[0];
+    public String[] getGroups(String name) {
+        User user = getUser(name);
+        Set<String> groups = new HashSet<>();
+        if (user != null) {
+            groups.add(user.getRank().getId());
+            groups.addAll(user.getRank().getParents());
+        }
+        return groups.toArray(new String[0]);
     }
 
     @Override
@@ -325,12 +333,12 @@ public class Core extends JavaPlugin implements PermissionsProvider {
     }
 
     @Override
-    public boolean inGroup(OfflinePlayer offlinePlayer, String s) {
-        return false;
+    public boolean inGroup(OfflinePlayer offlinePlayer, String group) {
+        return inGroup(offlinePlayer.getName(), group);
     }
 
     @Override
     public String[] getGroups(OfflinePlayer offlinePlayer) {
-        return new String[0];
+        return getGroups(offlinePlayer.getName());
     }
 }
