@@ -57,8 +57,9 @@ public class Core extends JavaPlugin implements PermissionsProvider {
     private final Set<DisablingThread> threads = new HashSet<>();
     private static Core instance;
 
-    private final YamlStorage messages = new YamlStorage(new File(getDataFolder(), "messages.yml"));
-    private final YamlStorage worldConfig = new YamlStorage(new File(getDataFolder(), "worlds.yml"));
+    private YamlStorage messages;
+    private YamlStorage worldConfig;
+    private YamlStorage staffConfig;
 
     private BloodExpansion expansion;
 
@@ -74,24 +75,39 @@ public class Core extends JavaPlugin implements PermissionsProvider {
 
     public void onEnable() {
         httpUtility = new HTTPUtil();
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&e&lLoading Configuration"));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
         getConfig().options().copyDefaults(true);
         for (Config value : Config.values()) {
             getConfig().addDefault(value.getPath(), value.getDef());
         }
         saveConfig();
+        Bukkit.getLogger().info("config.yml successfully loaded.");
+        messages = new YamlStorage(new File(getDataFolder(), "messages.yml"));
+        worldConfig = new YamlStorage(new File(getDataFolder(), "worlds.yml"));
+        staffConfig = new YamlStorage(new File(getDataFolder(), "staffconfig.yml"));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&6&lChecking License"));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
         String license = getConfig().getString("license");
         if (!httpUtility.validate(license)) {
             Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&cInvalid license! plugin disabling..."));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
             Bukkit.getPluginManager().disablePlugin(this);
             return;
-        }else{
+        } else {
             Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aLicense is valid! Enabling core."));
-
         }
         instance = this;
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
 
         Bukkit.getScheduler().runTaskAsynchronously(this, ()-> {
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lLoading Libraries"));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
             loadClasses();
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aLibraries loaded successfully."));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
             Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
             dateFormat.setTimeZone(TimeZone.getDefault());
 
@@ -102,21 +118,31 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             messages.save();
 
             if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lLoading PlaceholderAPI Expansion"));
+                Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
                 expansion = new BloodExpansion();
                 expansion.register();
+                Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+                Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aExpansion loaded successfully."));
             }
 
             worldManager = new WorldManager();
-
             worldManager.loadWorlds();
-
             mongoManager = new MongoManager();
             redisManager = new RedisManager();
             chatManager = new ChatManager();
-            rankManager = new RankManager();
             punishmentManager = new PunishmentManager();
             staffManager = new StaffManager();
 
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lLoading Ranks"));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            rankManager = new RankManager();
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aRanks loaded successfully."));
+
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lLoading Commands"));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
             new BloodCommand();
             new RankCommand();
             new ListCommand();
@@ -153,41 +179,75 @@ public class Core extends JavaPlugin implements PermissionsProvider {
             new StaffListCommand();
             new FreezeCommand();
             new ChatManagerCommand();
-
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aLoaded commands successfully."));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lLoading Listeners"));
             Bukkit.getPluginManager().registerEvents(new BukkitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PunishmentListener(), this);
             Bukkit.getPluginManager().registerEvents(new WorldListener(), this);
             Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
             Bukkit.getPluginManager().registerEvents(new StaffListener(), this);
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aLoaded listeners successfully."));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
 
             for (Player p : Bukkit.getOnlinePlayers()) {
                 users.add(new User(p));
             }
+
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&6&lBloodCore&r &7v" + getDescription().getVersion()));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&fPlugin has successfully been &a&lEnabled&f!"));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
         });
     }
 
     public void onDisable() {
         if (instance != null) {
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lUnloading Commands"));
             try {
                 CommandMap map = (CommandMap) ReflectionUtil.getField(Bukkit.getServer().getClass(), "commandMap").get(Bukkit.getServer());
                 ReflectionUtil.unregisterCommands(map, Command.getRegisteredCommands());
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aCommands unloaded successfully."));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lSaving Users"));
             for (User user : users) {
                 user.unload();
             }
             users.clear();
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aUsers unloaded successfully."));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lDisabling Listener Threads"));
             for (DisablingThread thread : threads) {
                 thread.disable();
             }
-
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aThreads unloaded successfully."));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&d&lClosing Connections"));
             redisManager.shutdown();
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aConnections closed successfully."));
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
 
             if (expansion != null && expansion.isRegistered()) {
                 expansion.unregister();
             }
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
         }
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&6&lBloodCore&r &7v" + getDescription().getVersion()));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color(" "));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&fPlugin has successfully been &c&lDisabled&f!"));
+        Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&7&m------------------------------------"));
     }
 
     public User getUser(Player player) {

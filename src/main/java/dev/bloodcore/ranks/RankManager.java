@@ -7,9 +7,11 @@ import dev.bloodcore.Core;
 import dev.bloodcore.thread.DisablingThread;
 import dev.bloodcore.thread.listeners.RankListenerThread;
 import dev.bloodcore.thread.listeners.UserListenerThread;
+import dev.bloodcore.utils.ChatUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,6 +29,7 @@ public class RankManager {
 
         for (Document data : Core.i().getMongoManager().getRanksCollection().find()) {
             updateRank(data, false);
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aLoaded rank: &f" + data.getString("_id")));
         }
 
         DisablingThread t1 = new RankListenerThread(this);

@@ -32,6 +32,7 @@ public abstract class Command extends org.bukkit.command.Command {
             map.register(getName(), "bloodcore", this);
             registeredCommands.add(name);
             registeredCommands.addAll(aliases);
+            Bukkit.getConsoleSender().sendMessage(ChatUtil.color("&aLoaded command: &f" + name));
         } catch (Exception e) {
             e.printStackTrace();
         }

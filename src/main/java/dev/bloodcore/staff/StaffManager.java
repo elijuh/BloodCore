@@ -15,14 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.io.File;
-
 @Getter
 public class StaffManager {
     private ItemStack compass, inspect, freeze, carpet, staffOnline, vanish, unvanish;
     private int compassSlot, inspectSlot, freezeSlot, carpetSlot, staffOnlineSlot, vanishSlot;
 
-    private final YamlStorage staffConfig = new YamlStorage(new File(Core.i().getDataFolder(), "staffconfig.yml"));
+    private final YamlStorage staffConfig = Core.i().getStaffConfig();
 
     public StaffManager() {
         setItems();
